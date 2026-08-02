@@ -12,7 +12,7 @@ export function AuthLayout({ title, subtitle, children }: { title: string; subti
           <h1 className="text-xl font-semibold text-[var(--color-text)]">{title}</h1>
           {subtitle && <p className="text-sm text-[var(--color-text-muted)]">{subtitle}</p>}
         </div>
-        <div className="rounded-[var(--radius-card)] border border-[var(--color-border)] bg-[var(--color-surface)] p-6 shadow-sm">
+        <div className="rounded-[var(--radius-card)] border border-[var(--color-border)] bg-[var(--color-surface)] p-6 shadow-[var(--shadow-card)]">
           {children}
         </div>
       </div>

@@ -37,3 +37,13 @@ const MONTH_NAMES_PT = [
 export function monthLabelPt(date: Date): string {
   return `${MONTH_NAMES_PT[date.getMonth()]} de ${date.getFullYear()}`
 }
+
+/** Formats a 'YYYY-MM-DD' string as 'DD de Mês' (or 'DD de Mês de AAAA' if not the current year). */
+export function formatDisplayDatePt(dateStr: string): string {
+  const date = parseLocalDate(dateStr)
+  const day = date.getDate()
+  const month = MONTH_NAMES_PT[date.getMonth()]
+  const year = date.getFullYear()
+  const currentYear = new Date().getFullYear()
+  return year === currentYear ? `${day} de ${month}` : `${day} de ${month} de ${year}`
+}

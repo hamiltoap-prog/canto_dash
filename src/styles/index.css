@@ -6,66 +6,90 @@
   --radius-card: 1rem;
   --radius-control: 0.625rem;
 
-  /* Base surfaces — light */
+  /* Base surfaces — light. Neutral, graphite-leaning grays rather than
+     pure black/white, in the spirit of Apple's system gray scale. */
   --color-surface: #ffffff;
-  --color-surface-raised: #f7f7f9;
-  --color-surface-sunken: #eeeef1;
-  --color-border: #e2e2e7;
-  --color-text: #1c1c1e;
+  --color-surface-raised: #f7f7f8;
+  --color-surface-sunken: #f0f0f2;
+  --color-border: #e3e3e6;
+  --color-text: #1d1d1f;
   --color-text-muted: #6e6e73;
 
-  /* Brand accent (Geral / no naipe selected) */
-  --color-accent: #007aff;
-  --color-accent-soft: #e5f1ff;
+  /* Brand accent (Geral / no naipe selected) — a restrained, slightly
+     deep blue rather than a bright "candy" blue. */
+  --color-accent: #0a5fd9;
+  --color-accent-soft: #eaf1fc;
 
-  /* Naipe theme colors — used as subtle accents when a naipe filter is active */
-  --color-naipe-soprano: #ff6482;
-  --color-naipe-soprano-soft: #ffe7ec;
-  --color-naipe-contralto: #af52de;
-  --color-naipe-contralto-soft: #f4e6fb;
-  --color-naipe-tenor: #34c759;
-  --color-naipe-tenor-soft: #e4f8ea;
-  --color-naipe-baixo: #5e5ce6;
-  --color-naipe-baixo-soft: #e8e7fc;
-  --color-naipe-solo: #ff9f0a;
-  --color-naipe-solo-soft: #fff2e0;
+  /* Naipe theme colors — deliberately desaturated / muted so the tint reads
+     as a serious, professional accent rather than a playful color-coding.
+     Each has a near-neutral "soft" tint used as a barely-there background. */
+  --color-naipe-soprano: #a85b6c;
+  --color-naipe-soprano-soft: #f6eef0;
+  --color-naipe-contralto: #7d6a9c;
+  --color-naipe-contralto-soft: #f1eef5;
+  --color-naipe-tenor: #4c7f66;
+  --color-naipe-tenor-soft: #edf3f0;
+  --color-naipe-baixo: #55628c;
+  --color-naipe-baixo-soft: #eef0f5;
+  --color-naipe-solo: #a87a3d;
+  --color-naipe-solo-soft: #f5f0e6;
+
+  /* Elevation — soft, diffused, low-opacity, à la Apple cards */
+  --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.04), 0 8px 20px -6px rgba(0, 0, 0, 0.08);
+  --shadow-raised: 0 2px 6px rgba(0, 0, 0, 0.06), 0 16px 32px -12px rgba(0, 0, 0, 0.12);
 }
 
 :root[data-theme='dark'] {
   --color-surface: #1c1c1e;
-  --color-surface-raised: #2c2c2e;
+  --color-surface-raised: #262628;
   --color-surface-sunken: #131314;
-  --color-border: #38383a;
-  --color-text: #f2f2f7;
-  --color-text-muted: #98989f;
+  --color-border: #3a3a3d;
+  --color-text: #f2f2f5;
+  --color-text-muted: #98989d;
 
-  --color-accent: #0a84ff;
-  --color-accent-soft: #12283f;
+  --color-accent: #4c9aff;
+  --color-accent-soft: #142238;
 
-  --color-naipe-soprano-soft: #3a1d24;
-  --color-naipe-contralto-soft: #2e2136;
-  --color-naipe-tenor-soft: #163420;
-  --color-naipe-baixo-soft: #201f3d;
-  --color-naipe-solo-soft: #3a2a10;
+  --color-naipe-soprano: #d38b98;
+  --color-naipe-soprano-soft: #2e2224;
+  --color-naipe-contralto: #ac9bc4;
+  --color-naipe-contralto-soft: #262332;
+  --color-naipe-tenor: #86b89e;
+  --color-naipe-tenor-soft: #1c2924;
+  --color-naipe-baixo: #9aa4c7;
+  --color-naipe-baixo-soft: #202333;
+  --color-naipe-solo: #cca671;
+  --color-naipe-solo-soft: #2c2418;
+
+  --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.24), 0 8px 20px -6px rgba(0, 0, 0, 0.4);
+  --shadow-raised: 0 2px 6px rgba(0, 0, 0, 0.3), 0 16px 32px -12px rgba(0, 0, 0, 0.55);
 }
 
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme='light']) {
     --color-surface: #1c1c1e;
-    --color-surface-raised: #2c2c2e;
+    --color-surface-raised: #262628;
     --color-surface-sunken: #131314;
-    --color-border: #38383a;
-    --color-text: #f2f2f7;
-    --color-text-muted: #98989f;
+    --color-border: #3a3a3d;
+    --color-text: #f2f2f5;
+    --color-text-muted: #98989d;
 
-    --color-accent: #0a84ff;
-    --color-accent-soft: #12283f;
+    --color-accent: #4c9aff;
+    --color-accent-soft: #142238;
 
-    --color-naipe-soprano-soft: #3a1d24;
-    --color-naipe-contralto-soft: #2e2136;
-    --color-naipe-tenor-soft: #163420;
-    --color-naipe-baixo-soft: #201f3d;
-    --color-naipe-solo-soft: #3a2a10;
+    --color-naipe-soprano: #d38b98;
+    --color-naipe-soprano-soft: #2e2224;
+    --color-naipe-contralto: #ac9bc4;
+    --color-naipe-contralto-soft: #262332;
+    --color-naipe-tenor: #86b89e;
+    --color-naipe-tenor-soft: #1c2924;
+    --color-naipe-baixo: #9aa4c7;
+    --color-naipe-baixo-soft: #202333;
+    --color-naipe-solo: #cca671;
+    --color-naipe-solo-soft: #2c2418;
+
+    --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.24), 0 8px 20px -6px rgba(0, 0, 0, 0.4);
+    --shadow-raised: 0 2px 6px rgba(0, 0, 0, 0.3), 0 16px 32px -12px rgba(0, 0, 0, 0.55);
   }
 }
 
@@ -80,6 +104,7 @@ body {
   color: var(--color-text);
   font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
+  letter-spacing: -0.011em;
 }
 
 /* Naipe theming: applied via data-naipe on a wrapping container so any

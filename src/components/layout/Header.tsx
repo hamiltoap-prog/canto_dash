@@ -61,12 +61,17 @@ export function Header() {
               data-naipe={n}
               onClick={() => setNaipe(n)}
               className={clsx(
-                'shrink-0 rounded-full border px-3.5 py-1.5 text-sm font-medium transition-colors',
+                'flex shrink-0 items-center gap-1.5 rounded-full border px-3 py-1.5 text-[13px] font-medium transition-colors',
                 active
-                  ? 'border-transparent bg-[var(--naipe-accent)] text-white'
-                  : 'border-[var(--color-border)] bg-[var(--naipe-accent-soft)] text-[var(--color-text)] hover:opacity-80',
+                  ? 'border-[var(--naipe-accent)]/30 bg-[var(--naipe-accent-soft)] text-[var(--naipe-accent)]'
+                  : 'border-[var(--color-border)] bg-transparent text-[var(--color-text-muted)] hover:bg-[var(--color-surface-raised)]',
               )}
             >
+              <span
+                className="size-1.5 rounded-full"
+                style={{ background: 'var(--naipe-accent)' }}
+                aria-hidden="true"
+              />
               {NAIPE_LABELS[n]}
             </button>
           )

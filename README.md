@@ -50,11 +50,11 @@ Os arquivos `vercel.json` e `netlify.toml` já cuidam do rewrite de SPA
 
 ## Estado do desenvolvimento
 
-Concluído nesta etapa: setup do repositório, schema do banco com RLS por
-grupo, autenticação (cadastro/login/recuperação de senha), seleção de
-grupo e o "shell" do dashboard (header com filtro de naipe tematizado,
-tema claro/escuro, navegação por abas).
+Concluído: setup do repositório, schema do banco com RLS por grupo,
+autenticação, seleção de grupo, shell do dashboard, e a tela de
+Repertório (projetos, matriz de disponibilidade por naipe, visualizador
+de PDF com anotações públicas/privadas, player de áudio com loop A/B e
+velocidade reduzida).
 
-Próximas etapas (ver `CLAUDE.md`): tela de Repertório completa (CRUD,
-visualizador de PDF, player de áudio com loop A/B e velocidade reduzida,
-anotações em PDF), Aulas, Agenda e Painel Administrativo completo.
+Próximas etapas (ver `CLAUDE.md`): CRUD de conteúdo (fica no Painel
+Administrativo), Aulas, Agenda e o próprio Painel Administrativo.

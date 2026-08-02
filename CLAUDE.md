@@ -175,6 +175,23 @@ antes de criar uma tabela nova.
 - Integração OAuth real com Google Agenda (deep link já resolve)
 - App nativo — só web responsiva
 
+## Direção de design (importante — não regredir)
+
+O usuário pediu explicitamente um visual **moderno, sério, inspirado no
+design da Apple**. Isso significa, na prática:
+- Cores por naipe são **desaturadas/discretas** (`--color-naipe-*` em
+  `src/styles/index.css`), nunca tons "candy"/saturados — o objetivo é um
+  acento sutil, não uma repintura colorida. Se for ajustar a paleta,
+  manter esse grau de sobriedade.
+- Chips de filtro (naipe, tipo de arquivo, status) usam contorno fino +
+  fundo `-soft` + texto na cor de acento — não preenchimento sólido
+  vibrante com texto branco (ver `Header.tsx` naipe pills e
+  `SongList.tsx` para o padrão a seguir em novos filtros).
+- Superfícies neutras em tons de cinza grafite (`--color-surface-*`),
+  cards com sombra suave (`--shadow-card`/`--shadow-raised`) para dar
+  elevação sem exagero, cantos arredondados moderados (não muito
+  "bubbly").
+
 ## Estado atual do desenvolvimento
 
 **Concluído:**
@@ -184,15 +201,22 @@ antes de criar uma tabela nova.
 3. Autenticação (cadastro, login, recuperação de senha) e seleção de grupo
 4. Shell do dashboard: header com seletor de grupo, tema claro/escuro,
    filtro de naipe tematizado, navegação por abas, tela de "sem grupo"
-5. Camadas de API para grupos, loop markers e anotações
-   (`src/api/*.ts`) — prontas para a UI consumir
+5. Tela de Repertório: lista de projetos (busca, status), detalhe do
+   projeto (descrição, endereço com link de mapa, galeria de figurino com
+   lightbox, paleta de cores com "copiar hex"), matriz de disponibilidade
+   por naipe, lista de músicas (busca + filtro Partituras/Guias/Tudo)
+6. Visualizador de PDF (`react-pdf`) com anotações por coordenada
+   normalizada — pública (admin) vs. privada (membro) — 3b do brief
+7. Player de áudio com velocidade (0.75×/1×/1.25×), marcadores A/B de
+   loop e persistência por usuário/música/naipe — 3a do brief
+
+**Ainda falta na tela de Repertório:** CRUD de projetos/músicas (criar/
+editar/excluir) — por ora só leitura; fica para o Painel Administrativo
+(ver abaixo), que é quem vai gerenciar conteúdo.
 
 **Próximas etapas (nesta ordem, seguindo o roadmap original):**
-1. Tela de Repertório completa: CRUD de projetos/músicas, matriz de
-   disponibilidade por naipe, visualizador de PDF + player de áudio
-   (incluindo loop A/B e velocidade — 3a acima) e anotações (3b acima)
-2. Aulas recorrentes com materiais
-3. Agenda (calendário mensal)
-4. Painel Administrativo completo (CRUD de Grupos/Membros/Projetos/
+1. Aulas recorrentes com materiais
+2. Agenda (calendário mensal)
+3. Painel Administrativo completo (CRUD de Grupos/Membros/Projetos/
    Repertório/Aulas/Eventos, upload direto de arquivo, confirmação de
    exclusão com aviso de vínculos)
