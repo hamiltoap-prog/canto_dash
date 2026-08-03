@@ -41,7 +41,7 @@ export function SongList({ songs }: { songs: Song[] }) {
             key={f.value}
             onClick={() => setFileType(f.value)}
             className={clsx(
-              'rounded-full border px-3 py-1.5 text-xs font-medium transition-colors',
+              'rounded-[var(--radius-chip)] border px-3 py-1.5 text-xs font-medium transition-colors',
               fileType === f.value
                 ? 'border-[var(--naipe-accent,var(--color-accent))]/30 bg-[var(--naipe-accent-soft,var(--color-accent-soft))] text-[var(--naipe-accent,var(--color-accent))]'
                 : 'border-[var(--color-border)] text-[var(--color-text-muted)] hover:bg-[var(--color-surface-raised)]',

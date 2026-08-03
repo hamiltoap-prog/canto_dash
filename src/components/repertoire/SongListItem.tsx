@@ -1,12 +1,16 @@
-import { useState } from 'react'
+import { lazy, Suspense, useState } from 'react'
 import clsx from 'clsx'
 import { ChevronDown } from 'lucide-react'
 import type { Song, Naipe } from '../../types/domain'
 import { NAIPE_LABELS, NAIPE_ORDER } from '../../lib/naipe'
 import { naipeFileKey } from '../../lib/naipeFile'
-import { PdfViewer } from './PdfViewer'
 import { AudioPlayer } from './AudioPlayer'
-import { EmptyState } from '../ui/AsyncState'
+import { EmptyState, LoadingState } from '../ui/AsyncState'
+
+// react-pdf pulls in pdf.js, which is large and only needed once a member
+// actually opens a sheet-music PDF — load it on demand instead of shipping
+// it in the main bundle for everyone.
+const PdfViewer = lazy(() => import('./PdfViewer').then((m) => ({ default: m.PdfViewer })))
 
 export function SongListItem({ song, initialNaipe }: { song: Song; initialNaipe: Naipe }) {
   const [expanded, setExpanded] = useState(false)
@@ -35,7 +39,7 @@ export function SongListItem({ song, initialNaipe }: { song: Song; initialNaipe:
                 data-naipe={n}
                 onClick={() => setNaipe(n)}
                 className={clsx(
-                  'rounded-full border px-2.5 py-1 text-xs font-medium transition-colors',
+                  'rounded-[var(--radius-chip)] border px-2.5 py-1 text-xs font-medium transition-colors',
                   n === naipe
                     ? 'border-[var(--naipe-accent)]/30 bg-[var(--naipe-accent-soft)] text-[var(--naipe-accent)]'
                     : 'border-[var(--color-border)] text-[var(--color-text-muted)] hover:bg-[var(--color-surface-raised)]',
@@ -53,7 +57,9 @@ export function SongListItem({ song, initialNaipe }: { song: Song; initialNaipe:
           )}
 
           {sheetUrl ? (
-            <PdfViewer fileUrl={sheetUrl} songId={song.id} materialKind="sheet_music" />
+            <Suspense fallback={<LoadingState label="Carregando visualizador de PDF..." />}>
+              <PdfViewer fileUrl={sheetUrl} songId={song.id} materialKind="sheet_music" />
+            </Suspense>
           ) : (
             <EmptyState message={`Sem partitura para ${NAIPE_LABELS[naipe].toLowerCase()}.`} />
           )}

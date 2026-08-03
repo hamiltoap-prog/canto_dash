@@ -170,13 +170,13 @@ export function AudioPlayer({ fileUrl, songId, naipe }: AudioPlayerProps) {
       </div>
 
       <div className="flex flex-wrap items-center justify-between gap-2">
-        <div className="flex items-center gap-1 rounded-full border border-[var(--color-border)] p-0.5">
+        <div className="flex items-center gap-1 rounded-[var(--radius-chip)] border border-[var(--color-border)] p-0.5">
           {SPEEDS.map((speed) => (
             <button
               key={speed}
               onClick={() => handleSpeed(speed)}
               className={clsx(
-                'rounded-full px-2.5 py-1 text-xs font-medium transition-colors',
+                'rounded-[calc(var(--radius-chip)-2px)] px-2.5 py-1 text-xs font-medium transition-colors',
                 playbackRate === speed
                   ? 'bg-[var(--naipe-accent-soft)] text-[var(--naipe-accent)]'
                   : 'text-[var(--color-text-muted)] hover:bg-[var(--color-surface-raised)]',
@@ -190,13 +190,13 @@ export function AudioPlayer({ fileUrl, songId, naipe }: AudioPlayerProps) {
         <div className="flex flex-wrap items-center gap-1.5">
           <button
             onClick={markA}
-            className="rounded-full border border-[var(--color-border)] px-2.5 py-1 text-xs font-medium text-[var(--color-text)] hover:bg-[var(--color-surface-raised)]"
+            className="rounded-[var(--radius-chip)] border border-[var(--color-border)] px-2.5 py-1 text-xs font-medium text-[var(--color-text)] hover:bg-[var(--color-surface-raised)]"
           >
             Marcar A {pointA !== null && `(${formatTime(pointA)})`}
           </button>
           <button
             onClick={markB}
-            className="rounded-full border border-[var(--color-border)] px-2.5 py-1 text-xs font-medium text-[var(--color-text)] hover:bg-[var(--color-surface-raised)]"
+            className="rounded-[var(--radius-chip)] border border-[var(--color-border)] px-2.5 py-1 text-xs font-medium text-[var(--color-text)] hover:bg-[var(--color-surface-raised)]"
           >
             Marcar B {pointB !== null && `(${formatTime(pointB)})`}
           </button>
@@ -204,7 +204,7 @@ export function AudioPlayer({ fileUrl, songId, naipe }: AudioPlayerProps) {
             onClick={() => setLoopEnabled((v) => !v)}
             disabled={!canLoop}
             className={clsx(
-              'flex items-center gap-1 rounded-full border px-2.5 py-1 text-xs font-medium disabled:opacity-40',
+              'flex items-center gap-1 rounded-[var(--radius-chip)] border px-2.5 py-1 text-xs font-medium disabled:opacity-40',
               loopEnabled
                 ? 'border-[var(--naipe-accent)]/30 bg-[var(--naipe-accent-soft)] text-[var(--naipe-accent)]'
                 : 'border-[var(--color-border)] text-[var(--color-text)] hover:bg-[var(--color-surface-raised)]',
@@ -226,7 +226,7 @@ export function AudioPlayer({ fileUrl, songId, naipe }: AudioPlayerProps) {
             <button
               onClick={handleSaveMarker}
               disabled={saving}
-              className="flex items-center gap-1 rounded-full border border-[var(--color-border)] px-2.5 py-1 text-xs font-medium text-[var(--color-text)] hover:bg-[var(--color-surface-raised)] disabled:opacity-50"
+              className="flex items-center gap-1 rounded-[var(--radius-chip)] border border-[var(--color-border)] px-2.5 py-1 text-xs font-medium text-[var(--color-text)] hover:bg-[var(--color-surface-raised)] disabled:opacity-50"
             >
               <Bookmark size={12} />
               {saving ? 'Salvando...' : 'Salvar trecho'}

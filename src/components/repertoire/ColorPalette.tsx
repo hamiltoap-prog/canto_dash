@@ -22,7 +22,7 @@ export function ColorPalette({ colors }: { colors: string[] }) {
         <button
           key={hex}
           onClick={() => handleCopy(hex)}
-          className="flex items-center gap-2 rounded-full border border-[var(--color-border)] bg-[var(--color-surface)]
+          className="flex items-center gap-2 rounded-[var(--radius-chip)] border border-[var(--color-border)] bg-[var(--color-surface)]
             py-1.5 pl-1.5 pr-3 text-xs font-medium text-[var(--color-text)] transition-colors hover:bg-[var(--color-surface-raised)]"
         >
           <span className="size-5 rounded-full border border-[var(--color-border)]" style={{ background: hex }} />

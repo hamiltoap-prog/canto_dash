@@ -129,7 +129,7 @@ export function PdfViewer({ fileUrl, songId, materialKind }: PdfViewerProps) {
             setPending(null)
           }}
           className={clsx(
-            'flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs font-medium transition-colors',
+            'flex items-center gap-1.5 rounded-[var(--radius-chip)] border px-3 py-1.5 text-xs font-medium transition-colors',
             annotateMode
               ? 'border-[var(--naipe-accent)]/30 bg-[var(--naipe-accent-soft)] text-[var(--naipe-accent)]'
               : 'border-[var(--color-border)] text-[var(--color-text-muted)] hover:bg-[var(--color-surface-raised)]',

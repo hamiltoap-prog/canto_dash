@@ -48,34 +48,39 @@ export function ProjectDetailPage() {
         Repertório
       </Link>
 
-      <div className="flex flex-col gap-2">
-        <div className="flex items-start justify-between gap-3">
-          <h1 className="text-xl font-semibold text-[var(--color-text)]">{project.name}</h1>
-          <StatusBadge status={project.status} />
-        </div>
+      <div
+        className="stage-scope relative overflow-hidden rounded-[var(--radius-card)] border border-[var(--color-border)] p-5"
+        style={{ background: 'var(--color-stage-surface)', backgroundImage: 'var(--stage-glow)' }}
+      >
+        <div className="relative flex flex-col gap-2">
+          <div className="flex items-start justify-between gap-3">
+            <h1 className="text-xl font-semibold tracking-tight text-[var(--color-text)]">{project.name}</h1>
+            <StatusBadge status={project.status} />
+          </div>
 
-        <div className="flex flex-wrap gap-x-4 gap-y-1 text-sm text-[var(--color-text-muted)]">
-          {project.event_date && (
-            <span className="flex items-center gap-1.5">
-              <CalendarDays size={14} />
-              {formatDisplayDatePt(project.event_date)}
-            </span>
-          )}
-          {project.venue && (
-            <span className="flex items-center gap-1.5">
-              <MapPin size={14} />
-              {mapHref ? (
-                <a href={mapHref} target="_blank" rel="noreferrer" className="hover:text-[var(--color-accent)] hover:underline">
-                  {project.venue}
-                </a>
-              ) : (
-                project.venue
-              )}
-            </span>
-          )}
-        </div>
+          <div className="flex flex-wrap gap-x-4 gap-y-1 text-sm text-[var(--color-text-muted)]">
+            {project.event_date && (
+              <span className="flex items-center gap-1.5">
+                <CalendarDays size={14} />
+                {formatDisplayDatePt(project.event_date)}
+              </span>
+            )}
+            {project.venue && (
+              <span className="flex items-center gap-1.5">
+                <MapPin size={14} />
+                {mapHref ? (
+                  <a href={mapHref} target="_blank" rel="noreferrer" className="hover:text-[var(--color-accent)] hover:underline">
+                    {project.venue}
+                  </a>
+                ) : (
+                  project.venue
+                )}
+              </span>
+            )}
+          </div>
 
-        {project.description && <p className="text-sm text-[var(--color-text)]">{project.description}</p>}
+          {project.description && <p className="text-sm text-[var(--color-text)]">{project.description}</p>}
+        </div>
       </div>
 
       {project.color_palette.length > 0 && (

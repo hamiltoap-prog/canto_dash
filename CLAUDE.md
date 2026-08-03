@@ -189,8 +189,26 @@ design da Apple**. Isso significa, na prática:
   `SongList.tsx` para o padrão a seguir em novos filtros).
 - Superfícies neutras em tons de cinza grafite (`--color-surface-*`),
   cards com sombra suave (`--shadow-card`/`--shadow-raised`) para dar
-  elevação sem exagero, cantos arredondados moderados (não muito
-  "bubbly").
+  elevação sem exagero.
+- **Pouco arredondado**: `--radius-card` (14px) e `--radius-control`/
+  `--radius-chip` (8px) são deliberadamente contidos — cantos arredondados
+  existem, mas nada de formato "pílula"/bolha em chips, badges ou botões
+  de filtro (evitar `rounded-full` fora de controles genuinamente
+  circulares como o botão de play ou o toggle de tema).
+- **"Atmosfera de palco"** nos momentos de identidade/abertura — tela de
+  login/cadastro e o cabeçalho de cada projeto (que é, no fim, uma
+  apresentação/show): fundo quase preto com um glow radial sutil
+  (`--color-stage-surface` + `--stage-glow` em `src/styles/index.css`),
+  card com leve blur, texto claro. A classe utilitária `.stage-scope`
+  reescopa os tokens de trabalho (`--color-surface`, `--color-text`,
+  `--color-border`, `--color-accent` etc.) para essa paleta escura fixa
+  dentro do elemento — assim qualquer componente comum (`TextField`,
+  `Button`, `StatusBadge`...) continua legível ali sem precisar de uma
+  variante própria. Esse tratamento é deliberadamente **fixo** (não segue
+  o toggle claro/escuro do usuário) — é um momento de marca, não uma
+  superfície de trabalho. Usar com moderação: só nesses dois lugares, não
+  espalhar pela interface toda (listas e telas de dados continuam claras/
+  neutras para manter legibilidade).
 
 ## Estado atual do desenvolvimento
 
