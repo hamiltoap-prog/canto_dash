@@ -301,13 +301,19 @@ de clique não tinha `z-index`, então a camada de texto do `react-pdf`
 (`.textLayer`, z-index 2) capturava o clique antes dele chegar no
 overlay — corrigido com z-index explícito + `pointer-events` condicional.
 
-**Ainda falta no Painel Administrativo:** CRUD de Aulas e Eventos (fica
-para quando as telas de Aulas/Agenda existirem — não faz sentido cadastrar
-conteúdo pra uma tela que ainda não existe).
+15. Aulas recorrentes: tela de visualização (`ClassesPage`, cards por
+    data, expande pra carregar os materiais) + CRUD completo no Admin
+    (`AdminClassesSection` + `ClassMaterialManager`) — material pode ser
+    PDF, áudio, imagem ou link externo, cada um abrindo do jeito certo
+    (`MaterialItem.tsx`): PDF/link abrem em nova aba, áudio ganha player
+    nativo inline, imagem abre lightbox. Reaproveita o mesmo padrão de
+    upload-ou-link do repertório
+
+**Ainda falta no Painel Administrativo:** CRUD de Eventos (fica para
+quando a tela de Agenda existir).
 
 **Próximas etapas (nesta ordem, seguindo o roadmap original):**
-1. Aulas recorrentes com materiais (tela de visualização + CRUD no Admin)
-2. Agenda — calendário mensal (tela de visualização + CRUD no Admin)
+1. Agenda — calendário mensal (tela de visualização + CRUD no Admin)
 
 **Nota técnica sobre build local:** `npm run build` sem
 `VITE_SUPABASE_URL`/`VITE_SUPABASE_ANON_KEY` definidos produz um bundle

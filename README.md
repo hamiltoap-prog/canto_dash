@@ -56,9 +56,10 @@ Concluído: setup do repositório, schema do banco com RLS por grupo,
 autenticação, seleção de grupo (incluindo criar o próprio grupo), shell do
 dashboard, tela de Repertório (projetos, matriz de disponibilidade por
 naipe, visualizador de PDF com anotações públicas/privadas, player de
-áudio com loop A/B e velocidade reduzida) e Painel Administrativo (Grupo,
-Membros, Projetos e Músicas — com upload de arquivo direto pro Storage).
+áudio com loop A/B e velocidade reduzida), tela de Aulas (materiais em
+PDF/áudio/imagem/link) e Painel Administrativo completo (Grupo, Membros,
+Projetos, Músicas e Aulas — com upload de arquivo direto pro Storage ou
+link externo).
 
-Próximas etapas (ver `CLAUDE.md`): Aulas recorrentes e Agenda (calendário
-mensal), cada uma com sua tela de visualização e o CRUD correspondente no
-Painel Administrativo.
+Próxima etapa (ver `CLAUDE.md`): Agenda (calendário mensal), com tela de
+visualização e o CRUD correspondente no Painel Administrativo.

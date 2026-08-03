@@ -3,12 +3,14 @@ import clsx from 'clsx'
 import { AdminGroupSection } from '../../components/admin/AdminGroupSection'
 import { AdminMembersSection } from '../../components/admin/AdminMembersSection'
 import { AdminProjectsSection } from '../../components/admin/AdminProjectsSection'
+import { AdminClassesSection } from '../../components/admin/AdminClassesSection'
 import { PageTitle } from '../../components/layout/PageTitle'
 
 const SECTIONS = [
   { key: 'grupo', label: 'Grupo' },
   { key: 'membros', label: 'Membros' },
   { key: 'projetos', label: 'Projetos' },
+  { key: 'aulas', label: 'Aulas' },
 ] as const
 
 type SectionKey = (typeof SECTIONS)[number]['key']
@@ -39,6 +41,7 @@ export function AdminPage() {
       {section === 'grupo' && <AdminGroupSection />}
       {section === 'membros' && <AdminMembersSection />}
       {section === 'projetos' && <AdminProjectsSection />}
+      {section === 'aulas' && <AdminClassesSection />}
     </div>
   )
 }
