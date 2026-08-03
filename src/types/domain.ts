@@ -38,7 +38,11 @@ export interface Project {
   status: ProjectStatus
 }
 
-export type NaipeFileMap = Partial<Record<Exclude<Naipe, 'geral'>, string>> & { full?: string }
+/**
+ * `playback` is audio-only (an instrumental/backing track, not tied to any
+ * naipe) — only rendered in guide_audio UI, never for sheet_music.
+ */
+export type NaipeFileMap = Partial<Record<Exclude<Naipe, 'geral'>, string>> & { full?: string; playback?: string }
 
 export interface Song {
   id: string

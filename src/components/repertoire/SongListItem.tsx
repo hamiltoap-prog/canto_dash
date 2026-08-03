@@ -1,6 +1,6 @@
 import { lazy, Suspense, useState } from 'react'
 import clsx from 'clsx'
-import { ChevronDown } from 'lucide-react'
+import { ChevronDown, Music4 } from 'lucide-react'
 import type { Song, Naipe } from '../../types/domain'
 import { NAIPE_LABELS, NAIPE_ORDER } from '../../lib/naipe'
 import { naipeFileKey } from '../../lib/naipeFile'
@@ -15,10 +15,11 @@ const PdfViewer = lazy(() => import('./PdfViewer').then((m) => ({ default: m.Pdf
 export function SongListItem({ song, initialNaipe }: { song: Song; initialNaipe: Naipe }) {
   const [expanded, setExpanded] = useState(false)
   const [naipe, setNaipe] = useState<Naipe>(initialNaipe)
+  const [usePlayback, setUsePlayback] = useState(false)
 
   const key = naipeFileKey(naipe)
   const sheetUrl = song.sheet_music[key]
-  const audioUrl = song.guide_audio[key]
+  const audioUrl = usePlayback ? song.guide_audio.playback : song.guide_audio[key]
 
   return (
     <div className="rounded-[var(--radius-card)] border border-[var(--color-border)] bg-[var(--color-surface)]">
@@ -32,7 +33,7 @@ export function SongListItem({ song, initialNaipe }: { song: Song; initialNaipe:
 
       {expanded && (
         <div className="flex flex-col gap-3 border-t border-[var(--color-border)] p-4">
-          <div className="flex flex-wrap gap-1.5" aria-label="Escolher naipe">
+          <div className="flex flex-wrap items-center gap-1.5" aria-label="Escolher naipe">
             {NAIPE_ORDER.map((n) => (
               <button
                 key={n}
@@ -48,12 +49,31 @@ export function SongListItem({ song, initialNaipe }: { song: Song; initialNaipe:
                 {NAIPE_LABELS[n]}
               </button>
             ))}
+            {song.guide_audio.playback && (
+              <>
+                <span className="mx-0.5 h-4 w-px bg-[var(--color-border)]" aria-hidden="true" />
+                <button
+                  onClick={() => setUsePlayback((v) => !v)}
+                  className={clsx(
+                    'flex items-center gap-1 rounded-[var(--radius-chip)] border px-2.5 py-1 text-xs font-medium transition-colors',
+                    usePlayback
+                      ? 'border-[var(--naipe-accent)]/30 bg-[var(--naipe-accent-soft)] text-[var(--naipe-accent)]'
+                      : 'border-[var(--color-border)] text-[var(--color-text-muted)] hover:bg-[var(--color-surface-raised)]',
+                  )}
+                >
+                  <Music4 size={12} />
+                  Playback
+                </button>
+              </>
+            )}
           </div>
 
           {audioUrl ? (
             <AudioPlayer fileUrl={audioUrl} songId={song.id} naipe={naipe} />
           ) : (
-            <EmptyState message={`Sem áudio-guia para ${NAIPE_LABELS[naipe].toLowerCase()}.`} />
+            <EmptyState
+              message={usePlayback ? 'Sem faixa de playback para esta música.' : `Sem áudio-guia para ${NAIPE_LABELS[naipe].toLowerCase()}.`}
+            />
           )}
 
           {sheetUrl ? (

@@ -13,7 +13,7 @@ export function TabNav() {
   const isAdmin = useAppStore(isActiveGroupAdmin)
 
   return (
-    <nav className="sticky bottom-0 border-t border-[var(--color-border)] bg-[var(--color-surface)]">
+    <nav className="sticky bottom-0 z-30 border-t border-[var(--color-border)] bg-[var(--color-surface)]/85 backdrop-blur-lg">
       <div className="mx-auto flex max-w-4xl">
         {TABS.map(({ to, label, icon: Icon }) => (
           <NavLink

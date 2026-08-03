@@ -37,6 +37,7 @@ export function PdfViewer({ fileUrl, songId, materialKind }: PdfViewerProps) {
   const [draftVisibility, setDraftVisibility] = useState<AnnotationVisibility>('private')
   const [openAnnotationId, setOpenAnnotationId] = useState<string | null>(null)
   const [saving, setSaving] = useState(false)
+  const [saveError, setSaveError] = useState<string | null>(null)
 
   const overlayRef = useRef<HTMLDivElement>(null)
 
@@ -60,11 +61,17 @@ export function PdfViewer({ fileUrl, songId, materialKind }: PdfViewerProps) {
     setOpenAnnotationId(null)
     setDraftText('')
     setDraftVisibility('private')
+    setSaveError(null)
   }
 
   async function handleSave() {
-    if (!pending || !groupId || !draftText.trim()) return
+    if (!pending || !draftText.trim()) return
+    if (!groupId) {
+      setSaveError('Nenhum grupo ativo — recarregue a página e tente de novo.')
+      return
+    }
     setSaving(true)
+    setSaveError(null)
     try {
       const created = await createAnnotation({
         group_id: groupId,
@@ -79,8 +86,8 @@ export function PdfViewer({ fileUrl, songId, materialKind }: PdfViewerProps) {
       setAnnotations((current) => [...current, created])
       setPending(null)
       setAnnotateMode(false)
-    } catch {
-      // deixa o formulário aberto para o usuário tentar novamente
+    } catch (err) {
+      setSaveError(err instanceof Error ? err.message : 'Não foi possível salvar a anotação.')
     } finally {
       setSaving(false)
     }
@@ -154,7 +161,10 @@ export function PdfViewer({ fileUrl, songId, materialKind }: PdfViewerProps) {
             <div
               ref={overlayRef}
               onClick={handleOverlayClick}
-              className={clsx('absolute inset-0', annotateMode && 'cursor-crosshair')}
+              className={clsx(
+                'absolute inset-0 z-20',
+                annotateMode ? 'pointer-events-auto cursor-crosshair' : 'pointer-events-none',
+              )}
             >
               {pageAnnotations.map((a) => (
                 <button
@@ -166,7 +176,7 @@ export function PdfViewer({ fileUrl, songId, materialKind }: PdfViewerProps) {
                   }}
                   style={{ left: `${a.x * 100}%`, top: `${a.y * 100}%` }}
                   className={clsx(
-                    'absolute flex size-5 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border text-[10px] font-bold shadow-[var(--shadow-card)]',
+                    'pointer-events-auto absolute flex size-5 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border text-[10px] font-bold shadow-[var(--shadow-card)]',
                     a.visibility === 'public'
                       ? 'border-[var(--naipe-accent)] bg-[var(--naipe-accent)] text-white'
                       : 'border-[var(--color-border)] bg-[var(--color-surface)] text-[var(--color-text-muted)]',
@@ -184,7 +194,7 @@ export function PdfViewer({ fileUrl, songId, materialKind }: PdfViewerProps) {
                     key={a.id}
                     style={{ left: `${a.x * 100}%`, top: `${a.y * 100}%` }}
                     onClick={(e) => e.stopPropagation()}
-                    className="absolute z-10 w-56 -translate-x-1/2 translate-y-3 rounded-[var(--radius-control)] border border-[var(--color-border)]
+                    className="pointer-events-auto absolute z-10 w-56 -translate-x-1/2 translate-y-3 rounded-[var(--radius-control)] border border-[var(--color-border)]
                       bg-[var(--color-surface)] p-3 text-sm text-[var(--color-text)] shadow-[var(--shadow-raised)]"
                   >
                     <p className="whitespace-pre-wrap">{a.content}</p>
@@ -204,9 +214,10 @@ export function PdfViewer({ fileUrl, songId, materialKind }: PdfViewerProps) {
                 <div
                   style={{ left: `${pending.x * 100}%`, top: `${pending.y * 100}%` }}
                   onClick={(e) => e.stopPropagation()}
-                  className="absolute z-10 w-64 -translate-x-1/2 translate-y-3 rounded-[var(--radius-control)] border border-[var(--color-border)]
+                  className="pointer-events-auto absolute z-10 w-64 -translate-x-1/2 translate-y-3 rounded-[var(--radius-control)] border border-[var(--color-border)]
                     bg-[var(--color-surface)] p-3 shadow-[var(--shadow-raised)]"
                 >
+                  {saveError && <p className="mb-2 text-xs text-[var(--color-naipe-soprano)]">{saveError}</p>}
                   <textarea
                     autoFocus
                     value={draftText}

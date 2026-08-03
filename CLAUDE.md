@@ -209,6 +209,19 @@ design da Apple**. Isso significa, na prática:
   superfície de trabalho. Usar com moderação: só nesses dois lugares, não
   espalhar pela interface toda (listas e telas de dados continuam claras/
   neutras para manter legibilidade).
+  - Dentro do `.stage-scope`, `--color-accent` é um dourado envelhecido
+    discreto (`#9c7f4c`), não o azul de trabalho do resto do app — ele
+    precisa combinar com o glow quente, não competir com ele. O texto/
+    ícone sobre esse acento usa `--color-accent-contrast` (também
+    reescopado, ver `Button.tsx` variante `primary`) em vez de branco
+    fixo, porque um acento mais claro pode precisar de texto escuro.
+- **Header e nav inferior fixos com leve desfoque** (`sticky` +
+  `backdrop-blur-lg` + fundo translúcido) — efeito "vidro fosco" ao
+  rolar a página, look mais premium que uma barra opaca comum.
+- **Títulos de página confiantes**: `components/layout/PageTitle.tsx`
+  (26px, tracking apertado) no topo de cada tela do dashboard — antes as
+  telas internas não tinham hierarquia tipográfica nenhuma, o que
+  contribuía pra sensação de "sem graça" apontada pelo usuário.
 
 ## Estado atual do desenvolvimento
 
@@ -241,6 +254,25 @@ design da Apple**. Isso significa, na prática:
 10. "Criar meu grupo" na tela de quem ainda não tem grupo — usa a RPC
     acima, então dá pra sair do zero sem precisar do Table Editor do
     Supabase
+11. Multi-grupo: botão "+" ao lado do seletor de grupo no header abre o
+    mesmo fluxo de criação a qualquer momento (não só quando o usuário
+    está sem nenhum grupo) — `CreateGroupModal.tsx`, reusado pelo
+    `NoGroupPage`. Membros/Projetos/Músicas no Admin já eram escopados
+    por `activeGroupId`, então múltiplos grupos (ex.: "Coral X", "Coral
+    Y") já funcionam de forma independente — só faltava o jeito de criar
+    o segundo grupo pela UI
+12. Faixa de "Playback" (instrumental/backing track) no áudio-guia —
+    além dos naipes e "Geral", uma música pode ter uma faixa de playback
+    avulsa (`NaipeFileMap.playback`), com upload no Admin e um chip
+    dedicado no seletor de áudio do player (não se aplica a partitura)
+
+**Bugs corrigidos nesta rodada** (ambos eram falha silenciosa, não do
+banco): upload de áudio-guia e criação de anotação em PDF não davam
+nenhum feedback quando falhavam — `SongManager`/`PdfViewer` agora mostram
+o erro real. A anotação em PDF tinha também um bug de verdade: o overlay
+de clique não tinha `z-index`, então a camada de texto do `react-pdf`
+(`.textLayer`, z-index 2) capturava o clique antes dele chegar no
+overlay — corrigido com z-index explícito + `pointer-events` condicional.
 
 **Ainda falta no Painel Administrativo:** CRUD de Aulas e Eventos (fica
 para quando as telas de Aulas/Agenda existirem — não faz sentido cadastrar

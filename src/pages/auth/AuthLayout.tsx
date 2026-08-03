@@ -10,8 +10,8 @@ export function AuthLayout({ title, subtitle, children }: { title: string; subti
       <div className="relative w-full max-w-sm">
         <div className="mb-8 flex flex-col items-center gap-3 text-center">
           <div
-            className="flex size-12 items-center justify-center rounded-xl text-white"
-            style={{ background: 'var(--color-accent)', boxShadow: '0 0 32px -4px rgba(76, 154, 255, 0.55)' }}
+            className="flex size-12 items-center justify-center rounded-xl text-[var(--color-accent-contrast)]"
+            style={{ background: 'var(--color-accent)', boxShadow: '0 0 32px -6px rgba(156, 127, 76, 0.6)' }}
           >
             <Music size={20} />
           </div>

@@ -3,6 +3,7 @@ import clsx from 'clsx'
 import { AdminGroupSection } from '../../components/admin/AdminGroupSection'
 import { AdminMembersSection } from '../../components/admin/AdminMembersSection'
 import { AdminProjectsSection } from '../../components/admin/AdminProjectsSection'
+import { PageTitle } from '../../components/layout/PageTitle'
 
 const SECTIONS = [
   { key: 'grupo', label: 'Grupo' },
@@ -17,6 +18,7 @@ export function AdminPage() {
 
   return (
     <div className="flex flex-col gap-4">
+      <PageTitle>Painel administrativo</PageTitle>
       <nav className="flex gap-1.5 border-b border-[var(--color-border)] pb-3" aria-label="Seções do painel administrativo">
         {SECTIONS.map((s) => (
           <button

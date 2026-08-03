@@ -6,6 +6,7 @@ import { matchesSearch } from '../../lib/text'
 import { LoadingState, ErrorState, EmptyState } from '../../components/ui/AsyncState'
 import { SearchField } from '../../components/ui/SearchField'
 import { ProjectCard } from '../../components/repertoire/ProjectCard'
+import { PageTitle } from '../../components/layout/PageTitle'
 
 export function RepertoirePage() {
   const activeGroupId = useAppStore((s) => s.activeGroupId)
@@ -32,6 +33,7 @@ export function RepertoirePage() {
 
   return (
     <div className="flex flex-col gap-4">
+      <PageTitle subtitle="Projetos, partituras e áudios-guia por naipe">Repertório</PageTitle>
       <SearchField
         placeholder="Buscar por nome do projeto..."
         value={query}

@@ -29,9 +29,13 @@
   --color-text-muted: #6e6e73;
 
   /* Brand accent (Geral / no naipe selected) — a restrained, slightly
-     deep blue rather than a bright "candy" blue. */
+     deep blue rather than a bright "candy" blue. --color-accent-contrast
+     is the text/icon color to use on top of a solid --color-accent fill;
+     kept as a token (not hardcoded white) so .stage-scope can repoint it
+     for readability against its own accent. */
   --color-accent: #0a5fd9;
   --color-accent-soft: #eaf1fc;
+  --color-accent-contrast: #ffffff;
 
   /* Naipe theme colors — deliberately desaturated / muted so the tint reads
      as a serious, professional accent rather than a playful color-coding.
@@ -131,8 +135,11 @@ body {
   --color-border: rgba(255, 255, 255, 0.12);
   --color-text: #f5f5f7;
   --color-text-muted: #a3a3a8;
-  --color-accent: #4c9aff;
-  --color-accent-soft: rgba(76, 154, 255, 0.16);
+  /* A muted antique-gold, tuned to sit quietly against the warm spotlight
+     glow instead of competing with it like the app's working blue would. */
+  --color-accent: #9c7f4c;
+  --color-accent-soft: rgba(156, 127, 76, 0.18);
+  --color-accent-contrast: #f8f1e2;
 }
 
 /* Naipe theming: applied via data-naipe on a wrapping container so any

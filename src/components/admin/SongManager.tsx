@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { FileText, Music2, Plus, Trash2, Upload, X } from 'lucide-react'
-import type { Naipe, NaipeFileMap, Song } from '../../types/domain'
+import type { NaipeFileMap, Song } from '../../types/domain'
 import { createSong, deleteSong, fetchSongs, updateSong } from '../../api/songs'
 import { uploadGroupFile, removeGroupFile } from '../../api/storage'
 import { NAIPE_LABELS } from '../../lib/naipe'
@@ -9,9 +9,11 @@ import { TextField } from '../ui/TextField'
 import { ConfirmDialog } from '../ui/ConfirmDialog'
 import { LoadingState, EmptyState } from '../ui/AsyncState'
 
-const FILE_COLUMNS: (keyof NaipeFileMap)[] = ['soprano', 'contralto', 'tenor', 'baixo', 'solo', 'full']
+type SharedFileColumn = 'soprano' | 'contralto' | 'tenor' | 'baixo' | 'solo' | 'full'
 
-const FILE_COLUMN_LABELS: Record<keyof NaipeFileMap, string> = {
+const FILE_COLUMNS: SharedFileColumn[] = ['soprano', 'contralto', 'tenor', 'baixo', 'solo', 'full']
+
+const FILE_COLUMN_LABELS: Record<SharedFileColumn, string> = {
   soprano: NAIPE_LABELS.soprano,
   contralto: NAIPE_LABELS.contralto,
   tenor: NAIPE_LABELS.tenor,
@@ -20,7 +22,7 @@ const FILE_COLUMN_LABELS: Record<keyof NaipeFileMap, string> = {
   full: 'Geral',
 }
 
-function naipeForPath(key: keyof NaipeFileMap): Naipe {
+function naipeForPath(key: keyof NaipeFileMap): string {
   return key === 'full' ? 'geral' : key
 }
 
@@ -132,16 +134,23 @@ function SongRow({
   onDeleteRequest: () => void
 }) {
   const [uploadingKey, setUploadingKey] = useState<string | null>(null)
+  const [errors, setErrors] = useState<Record<string, string>>({})
   const fileInputRefs = useRef<Record<string, HTMLInputElement | null>>({})
 
   async function handleUpload(kind: 'sheet_music' | 'guide_audio', key: keyof NaipeFileMap, file: File) {
     const uploadKey = `${kind}-${key}`
     setUploadingKey(uploadKey)
+    setErrors((current) => ({ ...current, [uploadKey]: '' }))
     try {
       const subdir = kind === 'sheet_music' ? `sheet-music/${naipeForPath(key)}` : `guide-audio/${naipeForPath(key)}`
       const url = await uploadGroupFile(groupId, subdir, file)
       const updated = await updateSong(song.id, { [kind]: { ...song[kind], [key]: url } })
       onUpdated(updated)
+    } catch (err) {
+      setErrors((current) => ({
+        ...current,
+        [uploadKey]: err instanceof Error ? err.message : 'Não foi possível enviar o arquivo.',
+      }))
     } finally {
       setUploadingKey(null)
       const input = fileInputRefs.current[uploadKey]
@@ -152,11 +161,20 @@ function SongRow({
   async function handleRemoveFile(kind: 'sheet_music' | 'guide_audio', key: keyof NaipeFileMap) {
     const current = song[kind][key]
     if (!current) return
+    const removeKey = `${kind}-${key}`
+    setErrors((current) => ({ ...current, [removeKey]: '' }))
     const next = { ...song[kind] }
     delete next[key]
-    const updated = await updateSong(song.id, { [kind]: next })
-    onUpdated(updated)
-    removeGroupFile(current).catch(() => {})
+    try {
+      const updated = await updateSong(song.id, { [kind]: next })
+      onUpdated(updated)
+      removeGroupFile(current).catch(() => {})
+    } catch (err) {
+      setErrors((prev) => ({
+        ...prev,
+        [removeKey]: err instanceof Error ? err.message : 'Não foi possível remover o arquivo.',
+      }))
+    }
   }
 
   return (
@@ -189,10 +207,11 @@ function SongRow({
             {FILE_COLUMNS.map((key) => (
               <tr key={key} className="border-t border-[var(--color-border)]">
                 <td className="py-1.5 pr-2 text-[var(--color-text)]">{FILE_COLUMN_LABELS[key]}</td>
-                <td className="py-1.5 pr-2">
+                <td className="py-1.5 pr-2 align-top">
                   <FileSlot
                     url={song.sheet_music[key]}
                     uploading={uploadingKey === `sheet_music-${key}`}
+                    error={errors[`sheet_music-${key}`]}
                     accept="application/pdf"
                     inputRef={(el) => {
                       fileInputRefs.current[`sheet_music-${key}`] = el
@@ -201,11 +220,12 @@ function SongRow({
                     onRemove={() => handleRemoveFile('sheet_music', key)}
                   />
                 </td>
-                <td className="py-1.5">
+                <td className="py-1.5 align-top">
                   <FileSlot
                     url={song.guide_audio[key]}
                     uploading={uploadingKey === `guide_audio-${key}`}
-                    accept="audio/*"
+                    error={errors[`guide_audio-${key}`]}
+                    accept="audio/*,.mp3,.wav,.m4a,.aac,.ogg,.flac"
                     inputRef={(el) => {
                       fileInputRefs.current[`guide_audio-${key}`] = el
                     }}
@@ -215,6 +235,23 @@ function SongRow({
                 </td>
               </tr>
             ))}
+            <tr className="border-t border-[var(--color-border)]">
+              <td className="py-1.5 pr-2 text-[var(--color-text)]">Playback</td>
+              <td className="py-1.5 pr-2 text-[var(--color-text-muted)]">—</td>
+              <td className="py-1.5 align-top">
+                <FileSlot
+                  url={song.guide_audio.playback}
+                  uploading={uploadingKey === 'guide_audio-playback'}
+                  error={errors['guide_audio-playback']}
+                  accept="audio/*,.mp3,.wav,.m4a,.aac,.ogg,.flac"
+                  inputRef={(el) => {
+                    fileInputRefs.current['guide_audio-playback'] = el
+                  }}
+                  onUpload={(file) => handleUpload('guide_audio', 'playback', file)}
+                  onRemove={() => handleRemoveFile('guide_audio', 'playback')}
+                />
+              </td>
+            </tr>
           </tbody>
         </table>
       </div>
@@ -225,6 +262,7 @@ function SongRow({
 function FileSlot({
   url,
   uploading,
+  error,
   accept,
   inputRef,
   onUpload,
@@ -232,6 +270,7 @@ function FileSlot({
 }: {
   url?: string
   uploading: boolean
+  error?: string
   accept: string
   inputRef: (el: HTMLInputElement | null) => void
   onUpload: (file: File) => void
@@ -249,20 +288,23 @@ function FileSlot({
   }
 
   return (
-    <label className="flex w-fit cursor-pointer items-center gap-1 rounded-[var(--radius-chip)] border border-dashed border-[var(--color-border)] px-2 py-1 text-[var(--color-text-muted)] hover:bg-[var(--color-surface-raised)]">
-      <Upload size={12} />
-      {uploading ? '...' : 'Enviar'}
-      <input
-        ref={inputRef}
-        type="file"
-        accept={accept}
-        hidden
-        disabled={uploading}
-        onChange={(e) => {
-          const file = e.target.files?.[0]
-          if (file) onUpload(file)
-        }}
-      />
-    </label>
+    <div className="flex flex-col gap-1">
+      <label className="flex w-fit cursor-pointer items-center gap-1 rounded-[var(--radius-chip)] border border-dashed border-[var(--color-border)] px-2 py-1 text-[var(--color-text-muted)] hover:bg-[var(--color-surface-raised)]">
+        <Upload size={12} />
+        {uploading ? '...' : 'Enviar'}
+        <input
+          ref={inputRef}
+          type="file"
+          accept={accept}
+          hidden
+          disabled={uploading}
+          onChange={(e) => {
+            const file = e.target.files?.[0]
+            if (file) onUpload(file)
+          }}
+        />
+      </label>
+      {error && <span className="max-w-[140px] text-[10px] leading-tight text-[var(--color-naipe-soprano)]">{error}</span>}
+    </div>
   )
 }
