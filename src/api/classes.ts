@@ -1,5 +1,5 @@
 import { supabase } from '../lib/supabase'
-import type { ClassMaterial, RecurringClass } from '../types/domain'
+import type { ClassCancellation, ClassMaterial, RecurringClass } from '../types/domain'
 
 export async function fetchClasses(groupId: string): Promise<RecurringClass[]> {
   const { data, error } = await supabase
@@ -58,5 +58,31 @@ export async function createMaterial(input: ClassMaterialInput): Promise<ClassMa
 
 export async function deleteMaterial(materialId: string): Promise<void> {
   const { error } = await supabase.from('class_materials').delete().eq('id', materialId)
+  if (error) throw error
+}
+
+/** All cancelled occurrences across every class in a group — cheap enough to fetch in one shot and filter client-side per month. */
+export async function fetchCancellations(groupId: string): Promise<ClassCancellation[]> {
+  const { data, error } = await supabase
+    .from('class_cancellations')
+    .select('id, class_id, occurrence_date, recurring_classes!inner(group_id)')
+    .eq('recurring_classes.group_id', groupId)
+
+  if (error) throw error
+  return (data ?? []).map((row) => ({ id: row.id, class_id: row.class_id, occurrence_date: row.occurrence_date }))
+}
+
+export async function cancelOccurrence(classId: string, occurrenceDate: string): Promise<ClassCancellation> {
+  const { data, error } = await supabase
+    .from('class_cancellations')
+    .insert({ class_id: classId, occurrence_date: occurrenceDate })
+    .select()
+    .single()
+  if (error) throw error
+  return data as ClassCancellation
+}
+
+export async function uncancelOccurrence(cancellationId: string): Promise<void> {
+  const { error } = await supabase.from('class_cancellations').delete().eq('id', cancellationId)
   if (error) throw error
 }

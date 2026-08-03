@@ -59,10 +59,21 @@ export interface RecurringClass {
   id: string
   group_id: string
   name: string
+  /** First (or only, if not recurring) occurrence date. */
   class_date: string
   time: string | null
   venue: string | null
   description: string | null
+  /** When true, repeats weekly (same weekday as class_date) through recurrence_end_date. */
+  is_recurring: boolean
+  recurrence_end_date: string | null
+}
+
+/** A single cancelled occurrence of a recurring class — the series itself isn't touched. */
+export interface ClassCancellation {
+  id: string
+  class_id: string
+  occurrence_date: string
 }
 
 export type MaterialKind = 'pdf' | 'audio' | 'image' | 'link'

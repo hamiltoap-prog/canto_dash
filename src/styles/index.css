@@ -51,6 +51,16 @@
   --color-naipe-solo: #a87a3d;
   --color-naipe-solo-soft: #f5f0e6;
 
+  /* Agenda — color by event type, same muted philosophy as naipe tokens. */
+  --color-event-aula: #4c7f8c;
+  --color-event-aula-soft: #eaf1f3;
+  --color-event-ensaio: #b08a4e;
+  --color-event-ensaio-soft: #f6f0e5;
+  --color-event-apresentacao: #a85b6c;
+  --color-event-apresentacao-soft: #f6eef0;
+  --color-event-outro: #6e6e73;
+  --color-event-outro-soft: #eeeeef;
+
   /* Elevation — soft, diffused, low-opacity, à la Apple cards */
   --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.04), 0 8px 20px -6px rgba(0, 0, 0, 0.08);
   --shadow-raised: 0 2px 6px rgba(0, 0, 0, 0.06), 0 16px 32px -12px rgba(0, 0, 0, 0.12);
@@ -78,6 +88,15 @@
   --color-naipe-solo: #cca671;
   --color-naipe-solo-soft: #2c2418;
 
+  --color-event-aula: #82b8c7;
+  --color-event-aula-soft: #1b2c30;
+  --color-event-ensaio: #cca671;
+  --color-event-ensaio-soft: #2c2418;
+  --color-event-apresentacao: #d38b98;
+  --color-event-apresentacao-soft: #2e2224;
+  --color-event-outro: #98989d;
+  --color-event-outro-soft: #232326;
+
   --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.24), 0 8px 20px -6px rgba(0, 0, 0, 0.4);
   --shadow-raised: 0 2px 6px rgba(0, 0, 0, 0.3), 0 16px 32px -12px rgba(0, 0, 0, 0.55);
 }
@@ -104,6 +123,15 @@
     --color-naipe-baixo-soft: #202333;
     --color-naipe-solo: #cca671;
     --color-naipe-solo-soft: #2c2418;
+
+    --color-event-aula: #82b8c7;
+    --color-event-aula-soft: #1b2c30;
+    --color-event-ensaio: #cca671;
+    --color-event-ensaio-soft: #2c2418;
+    --color-event-apresentacao: #d38b98;
+    --color-event-apresentacao-soft: #2e2224;
+    --color-event-outro: #98989d;
+    --color-event-outro-soft: #232326;
 
     --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.24), 0 8px 20px -6px rgba(0, 0, 0, 0.4);
     --shadow-raised: 0 2px 6px rgba(0, 0, 0, 0.3), 0 16px 32px -12px rgba(0, 0, 0, 0.55);

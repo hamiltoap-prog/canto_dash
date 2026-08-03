@@ -308,12 +308,30 @@ overlay — corrigido com z-index explícito + `pointer-events` condicional.
     (`MaterialItem.tsx`): PDF/link abrem em nova aba, áudio ganha player
     nativo inline, imagem abre lightbox. Reaproveita o mesmo padrão de
     upload-ou-link do repertório
+16. Aula recorrente semanal + cancelamento por ocorrência (migration
+    `0005_recurring_classes.sql`): uma aula pode repetir semanalmente
+    (mesmo dia da semana de `class_date`) até `recurrence_end_date`. As
+    ocorrências **não são materializadas em linhas** — são calculadas no
+    cliente (`src/lib/recurrence.ts`) a partir do intervalo visível, então
+    editar a aula propaga automaticamente pra todas as ocorrências
+    futuras, sem precisar de cron/scheduler (custo zero). Cancelar uma
+    ocorrência específica (ex.: não vai ter aula nesta terça por feriado)
+    grava uma exceção em `class_cancellations` sem tocar na série — a
+    ocorrência continua aparecendo na Agenda, só marcada como cancelada
+    (riscada), com opção de reativar
+17. Agenda — calendário mensal (`AgendaPage` + `MonthCalendar` +
+    `DayAgendaList`): navegação entre meses, cor por tipo de evento
+    (Aula/Ensaio/Apresentação/Outro — `src/lib/eventColors.ts`), clique
+    num dia mostra os eventos daquele dia com botão "Adicionar ao Google
+    Agenda" (deep link, `src/lib/googleCalendar.ts`, sem OAuth). A Agenda
+    funde duas fontes num só calendário: `calendar_events` (eventos
+    avulsos — Ensaio/Apresentação/Outro, CRUD em `AdminEventsSection`) e
+    as ocorrências computadas de `recurring_classes` (sempre tipo Aula).
+    Cancelar/reativar uma ocorrência de aula é uma ação disponível pro
+    admin direto na Agenda (não precisa ir no Admin)
 
-**Ainda falta no Painel Administrativo:** CRUD de Eventos (fica para
-quando a tela de Agenda existir).
-
-**Próximas etapas (nesta ordem, seguindo o roadmap original):**
-1. Agenda — calendário mensal (tela de visualização + CRUD no Admin)
+**Ainda falta no Painel Administrativo:** nada do roadmap original — os
+três módulos (Repertório, Aulas, Agenda) e seus CRUDs estão completos.
 
 **Nota técnica sobre build local:** `npm run build` sem
 `VITE_SUPABASE_URL`/`VITE_SUPABASE_ANON_KEY` definidos produz um bundle

@@ -1,4 +1,5 @@
 import { useState, type FormEvent } from 'react'
+import { Repeat } from 'lucide-react'
 import type { RecurringClass } from '../../types/domain'
 import type { RecurringClassInput } from '../../api/classes'
 import { Button } from '../ui/Button'
@@ -17,6 +18,8 @@ export function ClassForm({ groupId, initial, onSave, onCancel }: ClassFormProps
   const [time, setTime] = useState(initial?.time ?? '')
   const [venue, setVenue] = useState(initial?.venue ?? '')
   const [description, setDescription] = useState(initial?.description ?? '')
+  const [isRecurring, setIsRecurring] = useState(initial?.is_recurring ?? false)
+  const [recurrenceEndDate, setRecurrenceEndDate] = useState(initial?.recurrence_end_date ?? '')
 
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -24,6 +27,10 @@ export function ClassForm({ groupId, initial, onSave, onCancel }: ClassFormProps
   async function handleSubmit(event: FormEvent) {
     event.preventDefault()
     setError(null)
+    if (isRecurring && !recurrenceEndDate) {
+      setError('Defina até quando a aula se repete.')
+      return
+    }
     setSaving(true)
     try {
       await onSave({
@@ -33,6 +40,8 @@ export function ClassForm({ groupId, initial, onSave, onCancel }: ClassFormProps
         time: time || null,
         venue: venue.trim() || null,
         description: description.trim() || null,
+        is_recurring: isRecurring,
+        recurrence_end_date: isRecurring ? recurrenceEndDate : null,
       })
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Não foi possível salvar a aula.')
@@ -45,12 +54,35 @@ export function ClassForm({ groupId, initial, onSave, onCancel }: ClassFormProps
       <TextField label="Nome da aula" required value={name} onChange={(e) => setName(e.target.value)} placeholder="Ensaio de naipe" />
 
       <div className="grid grid-cols-2 gap-3">
-        <TextField label="Data" type="date" required value={classDate} onChange={(e) => setClassDate(e.target.value)} />
+        <TextField label={isRecurring ? 'Primeira data' : 'Data'} type="date" required value={classDate} onChange={(e) => setClassDate(e.target.value)} />
         <TextField label="Horário" type="time" value={time} onChange={(e) => setTime(e.target.value)} />
       </div>
 
       <TextField label="Local" value={venue} onChange={(e) => setVenue(e.target.value)} />
       <TextField label="Descrição" value={description} onChange={(e) => setDescription(e.target.value)} />
+
+      <div className="flex flex-col gap-2 rounded-[var(--radius-control)] border border-dashed border-[var(--color-border)] p-3">
+        <label className="flex items-center gap-2 text-sm font-medium text-[var(--color-text)]">
+          <input type="checkbox" checked={isRecurring} onChange={(e) => setIsRecurring(e.target.checked)} />
+          <Repeat size={14} className="text-[var(--color-text-muted)]" />
+          Aula recorrente (semanal)
+        </label>
+        {isRecurring && (
+          <TextField
+            label="Repete até"
+            type="date"
+            required
+            value={recurrenceEndDate}
+            min={classDate || undefined}
+            onChange={(e) => setRecurrenceEndDate(e.target.value)}
+          />
+        )}
+        <p className="text-xs text-[var(--color-text-muted)]">
+          {isRecurring
+            ? 'Vai aparecer na Agenda toda semana, no mesmo dia, até a data acima. Dá pra cancelar uma ocorrência específica direto na Agenda.'
+            : 'Aula única, só nesta data.'}
+        </p>
+      </div>
 
       {error && <p className="text-sm text-red-500">{error}</p>}
 

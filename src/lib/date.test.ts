@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { formatLocalDate, isSameLocalDay, monthLabelPt, parseLocalDate } from './date'
+import { formatLocalDate, isSameLocalDay, monthGridDays, monthLabelPt, parseLocalDate } from './date'
 
 describe('parseLocalDate', () => {
   it('parses YYYY-MM-DD as a local date, not shifted by UTC', () => {
@@ -31,5 +31,23 @@ describe('isSameLocalDay', () => {
 describe('monthLabelPt', () => {
   it('formats month and year in Portuguese', () => {
     expect(monthLabelPt(new Date(2026, 7, 1))).toBe('Agosto de 2026')
+  })
+})
+
+describe('monthGridDays', () => {
+  it('returns 42 days starting on a Sunday and covering the whole month', () => {
+    const days = monthGridDays(new Date(2026, 7, 15))
+    expect(days).toHaveLength(42)
+    expect(days[0].getDay()).toBe(0)
+    expect(days.some((d) => d.getFullYear() === 2026 && d.getMonth() === 7 && d.getDate() === 1)).toBe(true)
+    expect(days.some((d) => d.getFullYear() === 2026 && d.getMonth() === 7 && d.getDate() === 31)).toBe(true)
+  })
+
+  it('produces consecutive calendar days with no gaps', () => {
+    const days = monthGridDays(new Date(2026, 1, 10))
+    for (let i = 1; i < days.length; i++) {
+      const diff = days[i].getTime() - days[i - 1].getTime()
+      expect(diff).toBe(24 * 60 * 60 * 1000)
+    }
   })
 })

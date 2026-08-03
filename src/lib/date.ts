@@ -47,3 +47,25 @@ export function formatDisplayDatePt(dateStr: string): string {
   const currentYear = new Date().getFullYear()
   return year === currentYear ? `${day} de ${month}` : `${day} de ${month} de ${year}`
 }
+
+export const WEEKDAY_LABELS_PT = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb']
+
+/** The first and last calendar day of a month (local time), for range-filtering queries. */
+export function monthBounds(monthDate: Date): { start: Date; end: Date } {
+  const start = new Date(monthDate.getFullYear(), monthDate.getMonth(), 1)
+  const end = new Date(monthDate.getFullYear(), monthDate.getMonth() + 1, 0)
+  return { start, end }
+}
+
+/** 42 days (6 full weeks, Sunday-first) covering the month, including the leading/trailing days needed to fill the grid. */
+export function monthGridDays(monthDate: Date): Date[] {
+  const { start } = monthBounds(monthDate)
+  const gridStart = new Date(start)
+  gridStart.setDate(gridStart.getDate() - gridStart.getDay())
+
+  return Array.from({ length: 42 }, (_, i) => {
+    const day = new Date(gridStart)
+    day.setDate(gridStart.getDate() + i)
+    return day
+  })
+}

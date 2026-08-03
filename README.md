@@ -32,7 +32,7 @@ npm run lint     # lint (Oxlint)
 2. Crie um novo projeto.
 3. Em **SQL Editor**, rode nesta ordem os arquivos de `supabase/migrations/`
    (`0001_init.sql`, `0002_storage.sql`, `0003_profiles_and_invites.sql`,
-   `0004_lyrics.sql`).
+   `0004_lyrics.sql`, `0005_recurring_classes.sql`).
 4. Em **Project Settings → API**, copie a `Project URL` e a `anon public
    key` para `VITE_SUPABASE_URL` e `VITE_SUPABASE_ANON_KEY` no seu `.env`
    (e nas variáveis de ambiente do Vercel/Netlify quando for publicar).
@@ -52,14 +52,12 @@ Os arquivos `vercel.json` e `netlify.toml` já cuidam do rewrite de SPA
 
 ## Estado do desenvolvimento
 
-Concluído: setup do repositório, schema do banco com RLS por grupo,
-autenticação, seleção de grupo (incluindo criar o próprio grupo), shell do
-dashboard, tela de Repertório (projetos, matriz de disponibilidade por
-naipe, visualizador de PDF com anotações públicas/privadas, player de
-áudio com loop A/B e velocidade reduzida), tela de Aulas (materiais em
-PDF/áudio/imagem/link) e Painel Administrativo completo (Grupo, Membros,
-Projetos, Músicas e Aulas — com upload de arquivo direto pro Storage ou
-link externo).
-
-Próxima etapa (ver `CLAUDE.md`): Agenda (calendário mensal), com tela de
-visualização e o CRUD correspondente no Painel Administrativo.
+Os três módulos do roadmap original estão completos: **Repertório**
+(projetos, matriz de disponibilidade por naipe, visualizador de PDF com
+anotações públicas/privadas, player de áudio com loop A/B e velocidade
+reduzida), **Aulas** (materiais em PDF/áudio/imagem/link, com opção de
+aula recorrente semanal) e **Agenda** (calendário mensal, funde eventos
+avulsos e ocorrências de aula recorrente, cancelamento por ocorrência,
+deep link "Adicionar ao Google Agenda") — cada um com CRUD completo no
+Painel Administrativo. Ver `CLAUDE.md` para o detalhamento técnico e o
+que ainda não foi feito (fora do escopo desta primeira etapa).
