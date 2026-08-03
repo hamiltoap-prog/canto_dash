@@ -265,6 +265,14 @@ design da Apple**. Isso significa, na prática:
     além dos naipes e "Geral", uma música pode ter uma faixa de playback
     avulsa (`NaipeFileMap.playback`), com upload no Admin e um chip
     dedicado no seletor de áudio do player (não se aplica a partitura)
+13. Alternativa a upload direto: colar link externo (Dropbox, Google
+    Drive) em qualquer slot de partitura/áudio do Admin — o Supabase
+    Storage free tier tem limite de tamanho por arquivo (~50MB, mensagem
+    "The object exceeded the maximum allowed size"), e áudio-guia estoura
+    isso fácil. `src/lib/externalLink.ts` normaliza o link (Dropbox
+    `dl=0`→`dl=1`, Drive "view"→download direto) antes de salvar — a
+    partir daí é só uma URL igual a qualquer uma do Storage, o resto do
+    app não precisa saber a origem
 
 **Bugs corrigidos nesta rodada** (ambos eram falha silenciosa, não do
 banco): upload de áudio-guia e criação de anotação em PDF não davam

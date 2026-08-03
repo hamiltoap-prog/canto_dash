@@ -1,8 +1,9 @@
 import { useEffect, useRef, useState } from 'react'
-import { FileText, Music2, Plus, Trash2, Upload, X } from 'lucide-react'
+import { FileText, Link2, Music2, Plus, Trash2, Upload, X } from 'lucide-react'
 import type { NaipeFileMap, Song } from '../../types/domain'
 import { createSong, deleteSong, fetchSongs, updateSong } from '../../api/songs'
 import { uploadGroupFile, removeGroupFile } from '../../api/storage'
+import { isLikelyValidUrl, normalizeExternalLink } from '../../lib/externalLink'
 import { NAIPE_LABELS } from '../../lib/naipe'
 import { Button } from '../ui/Button'
 import { TextField } from '../ui/TextField'
@@ -158,6 +159,25 @@ function SongRow({
     }
   }
 
+  async function handleSaveLink(kind: 'sheet_music' | 'guide_audio', key: keyof NaipeFileMap, rawUrl: string) {
+    const linkKey = `${kind}-${key}`
+    setErrors((current) => ({ ...current, [linkKey]: '' }))
+    if (!isLikelyValidUrl(rawUrl)) {
+      setErrors((current) => ({ ...current, [linkKey]: 'Link inválido — cole a URL completa (com https://).' }))
+      return
+    }
+    try {
+      const url = normalizeExternalLink(rawUrl)
+      const updated = await updateSong(song.id, { [kind]: { ...song[kind], [key]: url } })
+      onUpdated(updated)
+    } catch (err) {
+      setErrors((current) => ({
+        ...current,
+        [linkKey]: err instanceof Error ? err.message : 'Não foi possível salvar o link.',
+      }))
+    }
+  }
+
   async function handleRemoveFile(kind: 'sheet_music' | 'guide_audio', key: keyof NaipeFileMap) {
     const current = song[kind][key]
     if (!current) return
@@ -217,6 +237,7 @@ function SongRow({
                       fileInputRefs.current[`sheet_music-${key}`] = el
                     }}
                     onUpload={(file) => handleUpload('sheet_music', key, file)}
+                    onSaveLink={(url) => handleSaveLink('sheet_music', key, url)}
                     onRemove={() => handleRemoveFile('sheet_music', key)}
                   />
                 </td>
@@ -230,6 +251,7 @@ function SongRow({
                       fileInputRefs.current[`guide_audio-${key}`] = el
                     }}
                     onUpload={(file) => handleUpload('guide_audio', key, file)}
+                    onSaveLink={(url) => handleSaveLink('guide_audio', key, url)}
                     onRemove={() => handleRemoveFile('guide_audio', key)}
                   />
                 </td>
@@ -248,6 +270,7 @@ function SongRow({
                     fileInputRefs.current['guide_audio-playback'] = el
                   }}
                   onUpload={(file) => handleUpload('guide_audio', 'playback', file)}
+                  onSaveLink={(url) => handleSaveLink('guide_audio', 'playback', url)}
                   onRemove={() => handleRemoveFile('guide_audio', 'playback')}
                 />
               </td>
@@ -266,6 +289,7 @@ function FileSlot({
   accept,
   inputRef,
   onUpload,
+  onSaveLink,
   onRemove,
 }: {
   url?: string
@@ -274,12 +298,16 @@ function FileSlot({
   accept: string
   inputRef: (el: HTMLInputElement | null) => void
   onUpload: (file: File) => void
+  onSaveLink: (url: string) => void
   onRemove: () => void
 }) {
+  const [linkMode, setLinkMode] = useState(false)
+  const [linkValue, setLinkValue] = useState('')
+
   if (url) {
     return (
       <div className="flex items-center gap-1 rounded-[var(--radius-chip)] border border-[var(--color-border)] px-2 py-1 text-[var(--color-naipe-tenor)]">
-        <span>Enviado</span>
+        <span>{url.includes('supabase.co') ? 'Enviado' : 'Link'}</span>
         <button onClick={onRemove} aria-label="Remover arquivo" className="text-[var(--color-text-muted)] hover:text-[var(--color-naipe-soprano)]">
           <X size={12} />
         </button>
@@ -287,23 +315,72 @@ function FileSlot({
     )
   }
 
+  if (linkMode) {
+    return (
+      <div className="flex flex-col gap-1">
+        <div className="flex items-center gap-1">
+          <input
+            type="url"
+            autoFocus
+            value={linkValue}
+            onChange={(e) => setLinkValue(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' && linkValue.trim()) onSaveLink(linkValue.trim())
+            }}
+            placeholder="Link do Dropbox, Drive..."
+            className="w-28 rounded-[var(--radius-chip)] border border-[var(--color-border)] bg-[var(--color-surface-raised)]
+              px-1.5 py-1 text-[11px] text-[var(--color-text)] outline-none focus:border-[var(--color-accent)]"
+          />
+          <button
+            onClick={() => linkValue.trim() && onSaveLink(linkValue.trim())}
+            aria-label="Salvar link"
+            className="flex size-6 shrink-0 items-center justify-center rounded-[var(--radius-chip)] bg-[var(--naipe-accent,var(--color-accent))] text-[var(--color-accent-contrast,white)]"
+          >
+            <Link2 size={11} />
+          </button>
+          <button
+            onClick={() => {
+              setLinkMode(false)
+              setLinkValue('')
+            }}
+            aria-label="Cancelar"
+            className="flex size-6 shrink-0 items-center justify-center rounded-[var(--radius-chip)] text-[var(--color-text-muted)] hover:bg-[var(--color-surface-raised)]"
+          >
+            <X size={11} />
+          </button>
+        </div>
+        {error && <span className="max-w-[140px] text-[10px] leading-tight text-[var(--color-naipe-soprano)]">{error}</span>}
+      </div>
+    )
+  }
+
   return (
     <div className="flex flex-col gap-1">
-      <label className="flex w-fit cursor-pointer items-center gap-1 rounded-[var(--radius-chip)] border border-dashed border-[var(--color-border)] px-2 py-1 text-[var(--color-text-muted)] hover:bg-[var(--color-surface-raised)]">
-        <Upload size={12} />
-        {uploading ? '...' : 'Enviar'}
-        <input
-          ref={inputRef}
-          type="file"
-          accept={accept}
-          hidden
-          disabled={uploading}
-          onChange={(e) => {
-            const file = e.target.files?.[0]
-            if (file) onUpload(file)
-          }}
-        />
-      </label>
+      <div className="flex items-center gap-1">
+        <label className="flex w-fit cursor-pointer items-center gap-1 rounded-[var(--radius-chip)] border border-dashed border-[var(--color-border)] px-2 py-1 text-[var(--color-text-muted)] hover:bg-[var(--color-surface-raised)]">
+          <Upload size={12} />
+          {uploading ? '...' : 'Enviar'}
+          <input
+            ref={inputRef}
+            type="file"
+            accept={accept}
+            hidden
+            disabled={uploading}
+            onChange={(e) => {
+              const file = e.target.files?.[0]
+              if (file) onUpload(file)
+            }}
+          />
+        </label>
+        <button
+          onClick={() => setLinkMode(true)}
+          aria-label="Colar link em vez de enviar arquivo"
+          title="Colar link (Dropbox, Drive...)"
+          className="flex size-6 shrink-0 items-center justify-center rounded-[var(--radius-chip)] border border-dashed border-[var(--color-border)] text-[var(--color-text-muted)] hover:bg-[var(--color-surface-raised)]"
+        >
+          <Link2 size={11} />
+        </button>
+      </div>
       {error && <span className="max-w-[140px] text-[10px] leading-tight text-[var(--color-naipe-soprano)]">{error}</span>}
     </div>
   )
