@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import { buildAgendaItems } from './agendaItems'
 import { parseLocalDate } from './date'
-import type { CalendarEvent, ClassCancellation, RecurringClass } from '../types/domain'
+import type { CalendarEvent, ClassCancellation, Project, RecurringClass } from '../types/domain'
 
 const rangeStart = parseLocalDate('2026-08-01')
 const rangeEnd = parseLocalDate('2026-08-31')
@@ -20,7 +20,7 @@ describe('buildAgendaItems', () => {
       color: null,
       related_project_id: null,
     }
-    const items = buildAgendaItems([event], [], [], rangeStart, rangeEnd)
+    const items = buildAgendaItems([event], [], [], [], rangeStart, rangeEnd)
     expect(items).toHaveLength(1)
     expect(items[0].source.kind).toBe('event')
   })
@@ -32,13 +32,15 @@ describe('buildAgendaItems', () => {
       name: 'Ensaio geral',
       class_date: '2026-08-04',
       time: '20:00',
+      end_time: null,
       venue: null,
+      address: null,
       description: null,
       is_recurring: true,
       recurrence_end_date: '2026-08-31',
     }
     const cancellation: ClassCancellation = { id: 'x1', class_id: 'c1', occurrence_date: '2026-08-11' }
-    const items = buildAgendaItems([], [recurringClass], [cancellation], rangeStart, rangeEnd)
+    const items = buildAgendaItems([], [recurringClass], [cancellation], [], rangeStart, rangeEnd)
 
     expect(items.map((i) => i.date)).toEqual(['2026-08-04', '2026-08-11', '2026-08-18', '2026-08-25'])
     const cancelled = items.find((i) => i.date === '2026-08-11')
@@ -67,12 +69,56 @@ describe('buildAgendaItems', () => {
       name: 'Ensaio',
       class_date: '2026-08-01',
       time: null,
+      end_time: null,
       venue: null,
+      address: null,
       description: null,
       is_recurring: false,
       recurrence_end_date: null,
     }
-    const items = buildAgendaItems([event], [recurringClass], [], rangeStart, rangeEnd)
+    const items = buildAgendaItems([event], [recurringClass], [], [], rangeStart, rangeEnd)
     expect(items.map((i) => i.date)).toEqual(['2026-08-01', '2026-08-02'])
+  })
+
+  it('includes a project as an "apresentação" item when it has a date in range', () => {
+    const project: Project = {
+      id: 'p1',
+      group_id: 'g1',
+      name: 'Concerto de Primavera',
+      event_date: '2026-08-20',
+      time: '19:30',
+      venue: 'Teatro Municipal',
+      address: 'Praça da Sé, 1',
+      description: 'Repertório completo',
+      costume_photos: [],
+      color_palette: [],
+      notes: null,
+      status: 'planejado',
+    }
+    const items = buildAgendaItems([], [], [], [project], rangeStart, rangeEnd)
+    expect(items).toHaveLength(1)
+    expect(items[0].type).toBe('apresentacao')
+    expect(items[0].source.kind).toBe('project')
+    expect(items[0].address).toBe('Praça da Sé, 1')
+  })
+
+  it('excludes a project with no date, or a date outside the visible range', () => {
+    const noDate: Project = {
+      id: 'p1',
+      group_id: 'g1',
+      name: 'Sem data',
+      event_date: null,
+      time: null,
+      venue: null,
+      address: null,
+      description: null,
+      costume_photos: [],
+      color_palette: [],
+      notes: null,
+      status: 'planejado',
+    }
+    const outOfRange: Project = { ...noDate, id: 'p2', event_date: '2026-09-01' }
+    const items = buildAgendaItems([], [], [], [noDate, outOfRange], rangeStart, rangeEnd)
+    expect(items).toHaveLength(0)
   })
 })

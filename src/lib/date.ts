@@ -48,6 +48,13 @@ export function formatDisplayDatePt(dateStr: string): string {
   return year === currentYear ? `${day} de ${month}` : `${day} de ${month} de ${year}`
 }
 
+/** Formats a start/end time-of-day pair as "20:00–21:30", or just "20:00" without an end time. */
+export function formatTimeRangePt(time: string | null, endTime?: string | null): string | null {
+  if (!time) return null
+  const start = time.slice(0, 5)
+  return endTime ? `${start}–${endTime.slice(0, 5)}` : start
+}
+
 export const WEEKDAY_LABELS_PT = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb']
 
 /** The first and last calendar day of a month (local time), for range-filtering queries. */

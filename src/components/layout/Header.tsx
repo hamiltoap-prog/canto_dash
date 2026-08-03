@@ -1,10 +1,12 @@
 import { useState } from 'react'
 import { Moon, Sun, LogOut, ChevronDown, Plus } from 'lucide-react'
-import clsx from 'clsx'
 import { useAppStore } from '../../store/useAppStore'
 import { NAIPE_LABELS, NAIPE_ORDER } from '../../lib/naipe'
 import { signOut } from '../../api/auth'
 import { CreateGroupModal } from '../groups/CreateGroupModal'
+import { SegmentedControl } from '../ui/SegmentedControl'
+
+const NAIPE_OPTIONS = NAIPE_ORDER.map((n) => ({ value: n, label: n === 'geral' ? 'Visão geral' : NAIPE_LABELS[n] }))
 
 export function Header() {
   const groups = useAppStore((s) => s.groups)
@@ -65,30 +67,8 @@ export function Header() {
         </div>
       </div>
 
-      <nav className="mx-auto flex max-w-4xl gap-1.5 overflow-x-auto px-4 pb-3" aria-label="Filtro por naipe">
-        {NAIPE_ORDER.map((n) => {
-          const active = n === naipe
-          return (
-            <button
-              key={n}
-              data-naipe={n}
-              onClick={() => setNaipe(n)}
-              className={clsx(
-                'flex shrink-0 items-center gap-1.5 rounded-[var(--radius-chip)] border px-3 py-1.5 text-[13px] font-medium transition-colors',
-                active
-                  ? 'border-[var(--naipe-accent)]/30 bg-[var(--naipe-accent-soft)] text-[var(--naipe-accent)]'
-                  : 'border-[var(--color-border)] bg-transparent text-[var(--color-text-muted)] hover:bg-[var(--color-surface-raised)]',
-              )}
-            >
-              <span
-                className="size-1.5 rounded-full"
-                style={{ background: 'var(--naipe-accent)' }}
-                aria-hidden="true"
-              />
-              {NAIPE_LABELS[n]}
-            </button>
-          )
-        })}
+      <nav className="mx-auto max-w-4xl px-4 pb-3" aria-label="Filtro por naipe">
+        <SegmentedControl options={NAIPE_OPTIONS} value={naipe} onChange={setNaipe} />
       </nav>
 
       {activeGroup?.description && (

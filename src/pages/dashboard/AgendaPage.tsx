@@ -3,7 +3,8 @@ import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { useAppStore, isActiveGroupAdmin } from '../../store/useAppStore'
 import { fetchEvents } from '../../api/events'
 import { fetchClasses, fetchCancellations, cancelOccurrence, uncancelOccurrence } from '../../api/classes'
-import type { CalendarEvent, ClassCancellation, RecurringClass } from '../../types/domain'
+import { fetchProjects } from '../../api/projects'
+import type { CalendarEvent, ClassCancellation, Project, RecurringClass } from '../../types/domain'
 import { buildAgendaItems } from '../../lib/agendaItems'
 import { monthBounds, monthLabelPt } from '../../lib/date'
 import { PageTitle } from '../../components/layout/PageTitle'
@@ -18,6 +19,7 @@ export function AgendaPage() {
   const [events, setEvents] = useState<CalendarEvent[]>([])
   const [classes, setClasses] = useState<RecurringClass[]>([])
   const [cancellations, setCancellations] = useState<ClassCancellation[]>([])
+  const [projects, setProjects] = useState<Project[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [reloadToken, setReloadToken] = useState(0)
@@ -29,11 +31,12 @@ export function AgendaPage() {
     if (!activeGroupId) return
     setLoading(true)
     setError(null)
-    Promise.all([fetchEvents(activeGroupId), fetchClasses(activeGroupId), fetchCancellations(activeGroupId)])
-      .then(([e, c, cn]) => {
+    Promise.all([fetchEvents(activeGroupId), fetchClasses(activeGroupId), fetchCancellations(activeGroupId), fetchProjects(activeGroupId)])
+      .then(([e, c, cn, p]) => {
         setEvents(e)
         setClasses(c)
         setCancellations(cn)
+        setProjects(p)
       })
       .catch((err) => setError(err instanceof Error ? err.message : 'Não foi possível carregar a agenda.'))
       .finally(() => setLoading(false))
@@ -41,7 +44,7 @@ export function AgendaPage() {
 
   const itemsByDate = useMemo(() => {
     const { start, end } = monthBounds(monthDate)
-    const items = buildAgendaItems(events, classes, cancellations, start, end)
+    const items = buildAgendaItems(events, classes, cancellations, projects, start, end)
     const map = new Map<string, typeof items>()
     for (const item of items) {
       const list = map.get(item.date) ?? []
@@ -49,7 +52,7 @@ export function AgendaPage() {
       map.set(item.date, list)
     }
     return map
-  }, [events, classes, cancellations, monthDate])
+  }, [events, classes, cancellations, projects, monthDate])
 
   async function handleCancelOccurrence(classId: string, date: string) {
     if (!classId) return

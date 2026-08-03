@@ -10,7 +10,9 @@ function makeClass(overrides: Partial<RecurringClass>): RecurringClass {
     name: 'Ensaio de naipe',
     class_date: '2026-08-04', // a Tuesday
     time: null,
+    end_time: null,
     venue: null,
+    address: null,
     description: null,
     is_recurring: false,
     recurrence_end_date: null,

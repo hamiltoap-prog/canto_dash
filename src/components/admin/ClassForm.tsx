@@ -16,7 +16,9 @@ export function ClassForm({ groupId, initial, onSave, onCancel }: ClassFormProps
   const [name, setName] = useState(initial?.name ?? '')
   const [classDate, setClassDate] = useState(initial?.class_date ?? '')
   const [time, setTime] = useState(initial?.time ?? '')
+  const [endTime, setEndTime] = useState(initial?.end_time ?? '')
   const [venue, setVenue] = useState(initial?.venue ?? '')
+  const [address, setAddress] = useState(initial?.address ?? '')
   const [description, setDescription] = useState(initial?.description ?? '')
   const [isRecurring, setIsRecurring] = useState(initial?.is_recurring ?? false)
   const [recurrenceEndDate, setRecurrenceEndDate] = useState(initial?.recurrence_end_date ?? '')
@@ -38,7 +40,9 @@ export function ClassForm({ groupId, initial, onSave, onCancel }: ClassFormProps
         name: name.trim(),
         class_date: classDate,
         time: time || null,
+        end_time: endTime || null,
         venue: venue.trim() || null,
+        address: address.trim() || null,
         description: description.trim() || null,
         is_recurring: isRecurring,
         recurrence_end_date: isRecurring ? recurrenceEndDate : null,
@@ -53,12 +57,14 @@ export function ClassForm({ groupId, initial, onSave, onCancel }: ClassFormProps
     <form onSubmit={handleSubmit} className="flex flex-col gap-4 rounded-[var(--radius-card)] border border-[var(--color-border)] bg-[var(--color-surface)] p-4">
       <TextField label="Nome da aula" required value={name} onChange={(e) => setName(e.target.value)} placeholder="Ensaio de naipe" />
 
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid grid-cols-3 gap-3">
         <TextField label={isRecurring ? 'Primeira data' : 'Data'} type="date" required value={classDate} onChange={(e) => setClassDate(e.target.value)} />
-        <TextField label="Horário" type="time" value={time} onChange={(e) => setTime(e.target.value)} />
+        <TextField label="Início" type="time" value={time} onChange={(e) => setTime(e.target.value)} />
+        <TextField label="Término" type="time" value={endTime} onChange={(e) => setEndTime(e.target.value)} />
       </div>
 
       <TextField label="Local" value={venue} onChange={(e) => setVenue(e.target.value)} />
+      <TextField label="Endereço" value={address} onChange={(e) => setAddress(e.target.value)} placeholder="Usado no link de mapa" />
       <TextField label="Descrição" value={description} onChange={(e) => setDescription(e.target.value)} />
 
       <div className="flex flex-col gap-2 rounded-[var(--radius-control)] border border-dashed border-[var(--color-border)] p-3">

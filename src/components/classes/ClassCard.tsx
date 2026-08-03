@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react'
-import { ChevronDown, CalendarDays, MapPin } from 'lucide-react'
+import { ChevronDown, CalendarDays, Clock, MapPin } from 'lucide-react'
 import clsx from 'clsx'
 import type { ClassMaterial, RecurringClass } from '../../types/domain'
 import { fetchClassMaterials } from '../../api/classes'
-import { formatDisplayDatePt } from '../../lib/date'
+import { formatDisplayDatePt, formatTimeRangePt } from '../../lib/date'
 import { LoadingState, EmptyState } from '../ui/AsyncState'
 import { MaterialItem } from './MaterialItem'
 
@@ -24,6 +24,11 @@ export function ClassCard({ recurringClass }: { recurringClass: RecurringClass }
       .finally(() => setLoading(false))
   }, [expanded, loaded, recurringClass.id])
 
+  const timeRange = formatTimeRangePt(recurringClass.time, recurringClass.end_time)
+  const mapHref = recurringClass.address
+    ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(recurringClass.address)}`
+    : null
+
   return (
     <div className="rounded-[var(--radius-card)] border border-[var(--color-border)] bg-[var(--color-surface)]">
       <button
@@ -37,6 +42,12 @@ export function ClassCard({ recurringClass }: { recurringClass: RecurringClass }
               <CalendarDays size={12} />
               {formatDisplayDatePt(recurringClass.class_date)}
             </span>
+            {timeRange && (
+              <span className="flex items-center gap-1">
+                <Clock size={12} />
+                {timeRange}
+              </span>
+            )}
             {recurringClass.venue && (
               <span className="flex items-center gap-1">
                 <MapPin size={12} />
@@ -51,6 +62,17 @@ export function ClassCard({ recurringClass }: { recurringClass: RecurringClass }
       {expanded && (
         <div className="flex flex-col gap-3 border-t border-[var(--color-border)] p-4">
           {recurringClass.description && <p className="text-sm text-[var(--color-text)]">{recurringClass.description}</p>}
+          {mapHref && (
+            <a
+              href={mapHref}
+              target="_blank"
+              rel="noreferrer"
+              className="flex w-fit items-center gap-1.5 text-sm text-[var(--naipe-accent,var(--color-accent))] hover:underline"
+            >
+              <MapPin size={13} />
+              Ver no mapa
+            </a>
+          )}
 
           {loading ? (
             <LoadingState label="Carregando materiais..." />

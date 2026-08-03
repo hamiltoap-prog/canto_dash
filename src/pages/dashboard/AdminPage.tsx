@@ -1,21 +1,21 @@
 import { useState } from 'react'
-import clsx from 'clsx'
 import { AdminGroupSection } from '../../components/admin/AdminGroupSection'
 import { AdminMembersSection } from '../../components/admin/AdminMembersSection'
 import { AdminProjectsSection } from '../../components/admin/AdminProjectsSection'
 import { AdminClassesSection } from '../../components/admin/AdminClassesSection'
 import { AdminEventsSection } from '../../components/admin/AdminEventsSection'
 import { PageTitle } from '../../components/layout/PageTitle'
+import { SegmentedControl } from '../../components/ui/SegmentedControl'
 
 const SECTIONS = [
-  { key: 'grupo', label: 'Grupo' },
-  { key: 'membros', label: 'Membros' },
-  { key: 'projetos', label: 'Projetos' },
-  { key: 'aulas', label: 'Aulas' },
-  { key: 'eventos', label: 'Eventos' },
+  { value: 'grupo', label: 'Grupo' },
+  { value: 'membros', label: 'Membros' },
+  { value: 'projetos', label: 'Projetos' },
+  { value: 'aulas', label: 'Aulas' },
+  { value: 'eventos', label: 'Eventos' },
 ] as const
 
-type SectionKey = (typeof SECTIONS)[number]['key']
+type SectionKey = (typeof SECTIONS)[number]['value']
 
 export function AdminPage() {
   const [section, setSection] = useState<SectionKey>('grupo')
@@ -23,22 +23,7 @@ export function AdminPage() {
   return (
     <div className="flex flex-col gap-4">
       <PageTitle>Painel administrativo</PageTitle>
-      <nav className="flex gap-1.5 overflow-x-auto border-b border-[var(--color-border)] pb-3" aria-label="Seções do painel administrativo">
-        {SECTIONS.map((s) => (
-          <button
-            key={s.key}
-            onClick={() => setSection(s.key)}
-            className={clsx(
-              'shrink-0 rounded-[var(--radius-chip)] px-3 py-1.5 text-sm font-medium transition-colors',
-              section === s.key
-                ? 'bg-[var(--naipe-accent-soft,var(--color-accent-soft))] text-[var(--naipe-accent,var(--color-accent))]'
-                : 'text-[var(--color-text-muted)] hover:bg-[var(--color-surface-raised)]',
-            )}
-          >
-            {s.label}
-          </button>
-        ))}
-      </nav>
+      <SegmentedControl options={SECTIONS} value={section} onChange={setSection} />
 
       {section === 'grupo' && <AdminGroupSection />}
       {section === 'membros' && <AdminMembersSection />}

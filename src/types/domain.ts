@@ -62,7 +62,10 @@ export interface RecurringClass {
   /** First (or only, if not recurring) occurrence date. */
   class_date: string
   time: string | null
+  end_time: string | null
   venue: string | null
+  /** Street address, used for the Google Maps link — venue is just the display name. */
+  address: string | null
   description: string | null
   /** When true, repeats weekly (same weekday as class_date) through recurrence_end_date. */
   is_recurring: boolean

@@ -195,6 +195,17 @@ design da Apple**. Isso significa, na prática:
   existem, mas nada de formato "pílula"/bolha em chips, badges ou botões
   de filtro (evitar `rounded-full` fora de controles genuinamente
   circulares como o botão de play ou o toggle de tema).
+  - **Exceção deliberada — controles de troca navegacional**: o
+    `SegmentedControl` (`src/components/ui/SegmentedControl.tsx`, usado
+    no filtro de naipe do header, filtro de tipo de arquivo em
+    Repertório e abas do Admin) é `rounded-full`, seguindo o
+    `UISegmentedControl` do próprio HIG da Apple — a referência visual
+    que o usuário mandou (nav em pílula) confirmou esse padrão. Isso não
+    é regressão da regra acima: a distinção é *navegação* (troca de
+    visão/aba — pode ser pílula, monocromático) vs. *informação* (chip/
+    badge que descreve um estado ou dado — continua com o raio contido,
+    nunca pílula). Não expandir o formato pílula pra badges de status,
+    contadores ou tags.
 - **"Atmosfera de palco"** nos momentos de identidade/abertura — tela de
   login/cadastro e o cabeçalho de cada projeto (que é, no fim, uma
   apresentação/show): fundo quase preto com um glow radial sutil
@@ -329,6 +340,40 @@ overlay — corrigido com z-index explícito + `pointer-events` condicional.
     as ocorrências computadas de `recurring_classes` (sempre tipo Aula).
     Cancelar/reativar uma ocorrência de aula é uma ação disponível pro
     admin direto na Agenda (não precisa ir no Admin)
+
+18. Horário de término e endereço nas aulas (migration
+    `0006_class_end_time_address.sql`, `recurring_classes.end_time` +
+    `recurring_classes.address`) — o card de aula mostra a faixa de
+    horário (`formatTimeRangePt` em `src/lib/date.ts`) e um link "Ver no
+    mapa", espelhando o padrão já usado no endereço de projeto
+19. Projeto com data aparece automaticamente na Agenda — sem gerar linha
+    nova em `calendar_events`. Segue o mesmo padrão de "computado, não
+    materializado" das ocorrências de aula recorrente:
+    `buildAgendaItems` (`src/lib/agendaItems.ts`) agora recebe a lista de
+    projetos do grupo e sintetiza um item tipo Apresentação para cada
+    projeto com `event_date` dentro do intervalo visível, carregando o
+    endereço do projeto para o link de mapa
+20. Resumo de evento na Agenda: clicar num item do dia não mostra mais o
+    card cheio inline — `DayAgendaList` agora renderiza linhas compactas
+    (ponto colorido + título + faixa de horário) e o clique abre
+    `EventDetailModal` com tipo, data/horário, endereço com link de mapa,
+    descrição, "Adicionar ao Google Agenda" e, quando o item vem de um
+    projeto, um link "Ver no repertório"; ações de cancelar/reativar
+    ocorrência de aula continuam disponíveis pro admin dentro do modal
+21. Sincronização do filtro de naipe: mudar o naipe no header agora
+    propaga pro seletor de naipe de cada música já expandida em
+    Repertório (antes só valia como valor inicial no primeiro render de
+    cada item — `SongListItem` ganhou um `useEffect` observando o valor
+    do header)
+22. Padrão visual novo — `SegmentedControl` (`src/components/ui/
+    SegmentedControl.tsx`): controle iOS-style neutro/monocromático
+    (trilho arredondado "afundado", segmento ativo como pílula clara com
+    gradiente sutil + sombra) para trocas navegacionais — filtro de
+    naipe no header, filtro de tipo de arquivo em Repertório, abas do
+    Painel Administrativo. `Button.tsx` ganhou um verniz de gradiente
+    (branco translúcido de cima para baixo) nas variantes `primary`/
+    `danger` para dar um pouco de profundidade sem precisar computar um
+    gradiente por cor de acento
 
 **Ainda falta no Painel Administrativo:** nada do roadmap original — os
 três módulos (Repertório, Aulas, Agenda) e seus CRUDs estão completos.

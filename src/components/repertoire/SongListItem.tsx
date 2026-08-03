@@ -1,4 +1,4 @@
-import { lazy, Suspense, useState } from 'react'
+import { lazy, Suspense, useEffect, useState } from 'react'
 import clsx from 'clsx'
 import { ChevronDown, Music4 } from 'lucide-react'
 import type { Song, Naipe } from '../../types/domain'
@@ -17,6 +17,12 @@ export function SongListItem({ song, initialNaipe }: { song: Song; initialNaipe:
   const [naipe, setNaipe] = useState<Naipe>(initialNaipe)
   const [usePlayback, setUsePlayback] = useState(false)
   const [pdfView, setPdfView] = useState<'partitura' | 'letra'>('partitura')
+
+  // Follow the header's naipe filter — selecting a naipe up top should
+  // reflect everywhere, not just in songs mounted afterward.
+  useEffect(() => {
+    setNaipe(initialNaipe)
+  }, [initialNaipe])
 
   const key = naipeFileKey(naipe)
   const sheetUrl = song.sheet_music[key]
