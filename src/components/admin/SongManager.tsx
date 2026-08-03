@@ -52,6 +52,7 @@ export function SongManager({ groupId, projectId }: { groupId: string; projectId
         order: songs.length,
         sheet_music: {},
         guide_audio: {},
+        lyrics_pdf: null,
       })
       setSongs((current) => [...current, song])
       setNewSongName('')
@@ -197,6 +198,49 @@ function SongRow({
     }
   }
 
+  async function handleLyricsUpload(file: File) {
+    setUploadingKey('lyrics_pdf')
+    setErrors((current) => ({ ...current, lyrics_pdf: '' }))
+    try {
+      const url = await uploadGroupFile(groupId, 'lyrics', file)
+      const updated = await updateSong(song.id, { lyrics_pdf: url })
+      onUpdated(updated)
+    } catch (err) {
+      setErrors((current) => ({ ...current, lyrics_pdf: err instanceof Error ? err.message : 'Não foi possível enviar o arquivo.' }))
+    } finally {
+      setUploadingKey(null)
+      const input = fileInputRefs.current.lyrics_pdf
+      if (input) input.value = ''
+    }
+  }
+
+  async function handleLyricsLink(rawUrl: string) {
+    setErrors((current) => ({ ...current, lyrics_pdf: '' }))
+    if (!isLikelyValidUrl(rawUrl)) {
+      setErrors((current) => ({ ...current, lyrics_pdf: 'Link inválido — cole a URL completa (com https://).' }))
+      return
+    }
+    try {
+      const updated = await updateSong(song.id, { lyrics_pdf: normalizeExternalLink(rawUrl) })
+      onUpdated(updated)
+    } catch (err) {
+      setErrors((current) => ({ ...current, lyrics_pdf: err instanceof Error ? err.message : 'Não foi possível salvar o link.' }))
+    }
+  }
+
+  async function handleLyricsRemove() {
+    if (!song.lyrics_pdf) return
+    const current = song.lyrics_pdf
+    setErrors((prev) => ({ ...prev, lyrics_pdf: '' }))
+    try {
+      const updated = await updateSong(song.id, { lyrics_pdf: null })
+      onUpdated(updated)
+      removeGroupFile(current).catch(() => {})
+    } catch (err) {
+      setErrors((prev) => ({ ...prev, lyrics_pdf: err instanceof Error ? err.message : 'Não foi possível remover o arquivo.' }))
+    }
+  }
+
   return (
     <div className="rounded-[var(--radius-card)] border border-[var(--color-border)] bg-[var(--color-surface)] p-3">
       <div className="mb-2 flex items-center justify-between">
@@ -257,6 +301,24 @@ function SongRow({
                 </td>
               </tr>
             ))}
+            <tr className="border-t border-[var(--color-border)]">
+              <td className="py-1.5 pr-2 text-[var(--color-text)]">Letra</td>
+              <td className="py-1.5 pr-2 align-top">
+                <FileSlot
+                  url={song.lyrics_pdf ?? undefined}
+                  uploading={uploadingKey === 'lyrics_pdf'}
+                  error={errors.lyrics_pdf}
+                  accept="application/pdf"
+                  inputRef={(el) => {
+                    fileInputRefs.current.lyrics_pdf = el
+                  }}
+                  onUpload={handleLyricsUpload}
+                  onSaveLink={handleLyricsLink}
+                  onRemove={handleLyricsRemove}
+                />
+              </td>
+              <td className="py-1.5 text-[var(--color-text-muted)]">—</td>
+            </tr>
             <tr className="border-t border-[var(--color-border)]">
               <td className="py-1.5 pr-2 text-[var(--color-text)]">Playback</td>
               <td className="py-1.5 pr-2 text-[var(--color-text-muted)]">—</td>

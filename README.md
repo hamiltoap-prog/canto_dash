@@ -31,7 +31,8 @@ npm run lint     # lint (Oxlint)
 1. Crie uma conta em [supabase.com](https://supabase.com) (free tier).
 2. Crie um novo projeto.
 3. Em **SQL Editor**, rode nesta ordem os arquivos de `supabase/migrations/`
-   (`0001_init.sql`, `0002_storage.sql`, `0003_profiles_and_invites.sql`).
+   (`0001_init.sql`, `0002_storage.sql`, `0003_profiles_and_invites.sql`,
+   `0004_lyrics.sql`).
 4. Em **Project Settings → API**, copie a `Project URL` e a `anon public
    key` para `VITE_SUPABASE_URL` e `VITE_SUPABASE_ANON_KEY` no seu `.env`
    (e nas variáveis de ambiente do Vercel/Netlify quando for publicar).

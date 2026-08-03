@@ -51,6 +51,8 @@ export interface Song {
   order: number
   sheet_music: NaipeFileMap
   guide_audio: NaipeFileMap
+  /** The lyrics sheet — one shared PDF, not per-naipe (unlike sheet_music). */
+  lyrics_pdf: string | null
 }
 
 export interface RecurringClass {
@@ -106,7 +108,7 @@ export interface PdfAnnotation {
   group_id: string
   user_id: string
   song_id: string
-  material_kind: 'sheet_music' | 'class_material'
+  material_kind: 'sheet_music' | 'lyrics' | 'class_material'
   page: number
   x: number
   y: number

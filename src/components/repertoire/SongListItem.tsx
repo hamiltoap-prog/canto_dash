@@ -16,6 +16,7 @@ export function SongListItem({ song, initialNaipe }: { song: Song; initialNaipe:
   const [expanded, setExpanded] = useState(false)
   const [naipe, setNaipe] = useState<Naipe>(initialNaipe)
   const [usePlayback, setUsePlayback] = useState(false)
+  const [pdfView, setPdfView] = useState<'partitura' | 'letra'>('partitura')
 
   const key = naipeFileKey(naipe)
   const sheetUrl = song.sheet_music[key]
@@ -76,7 +77,38 @@ export function SongListItem({ song, initialNaipe }: { song: Song; initialNaipe:
             />
           )}
 
-          {sheetUrl ? (
+          {song.lyrics_pdf && (
+            <div className="flex gap-1.5">
+              <button
+                onClick={() => setPdfView('partitura')}
+                className={clsx(
+                  'rounded-[var(--radius-chip)] border px-2.5 py-1 text-xs font-medium transition-colors',
+                  pdfView === 'partitura'
+                    ? 'border-[var(--naipe-accent)]/30 bg-[var(--naipe-accent-soft)] text-[var(--naipe-accent)]'
+                    : 'border-[var(--color-border)] text-[var(--color-text-muted)] hover:bg-[var(--color-surface-raised)]',
+                )}
+              >
+                Partitura
+              </button>
+              <button
+                onClick={() => setPdfView('letra')}
+                className={clsx(
+                  'rounded-[var(--radius-chip)] border px-2.5 py-1 text-xs font-medium transition-colors',
+                  pdfView === 'letra'
+                    ? 'border-[var(--naipe-accent)]/30 bg-[var(--naipe-accent-soft)] text-[var(--naipe-accent)]'
+                    : 'border-[var(--color-border)] text-[var(--color-text-muted)] hover:bg-[var(--color-surface-raised)]',
+                )}
+              >
+                Letra
+              </button>
+            </div>
+          )}
+
+          {pdfView === 'letra' && song.lyrics_pdf ? (
+            <Suspense fallback={<LoadingState label="Carregando visualizador de PDF..." />}>
+              <PdfViewer fileUrl={song.lyrics_pdf} songId={song.id} materialKind="lyrics" />
+            </Suspense>
+          ) : sheetUrl ? (
             <Suspense fallback={<LoadingState label="Carregando visualizador de PDF..." />}>
               <PdfViewer fileUrl={sheetUrl} songId={song.id} materialKind="sheet_music" />
             </Suspense>

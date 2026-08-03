@@ -273,6 +273,25 @@ design da Apple**. Isso significa, na prática:
     `dl=0`→`dl=1`, Drive "view"→download direto) antes de salvar — a
     partir daí é só uma URL igual a qualquer uma do Storage, o resto do
     app não precisa saber a origem
+14. Letra da música (`songs.lyrics_pdf`, migration `0004_lyrics.sql`) —
+    PDF separado da partitura, não é por naipe (a letra é a mesma pra
+    todo mundo, diferente da partitura que muda por voz). Slot próprio no
+    Admin (upload ou link) e alternância Partitura/Letra na tela de
+    visualização; anotações de letra ficam num `material_kind` próprio
+    (`'lyrics'`), sem se misturar com anotação de partitura do mesmo song
+
+**Limitação conhecida — link externo + PDF**: áudio via link externo
+funciona sempre (`<audio src>` só transmite, não é bloqueado por CORS),
+mas o visualizador de PDF (`react-pdf`) precisa *baixar* os bytes via
+JavaScript pra renderizar e permitir anotação, e isso *é* sujeito a CORS.
+O Dropbox nem sempre manda o header `Access-Control-Allow-Origin` no
+domínio de conteúdo direto, então o link pode funcionar pra abrir o PDF
+numa aba nova mas falhar ao carregar dentro do app — quando isso
+acontece, o `PdfViewer` mostra o erro e um link "Abrir em outra aba"
+como alternativa. Como PDF costuma ser bem menor que áudio, o upload
+direto pro Storage tende a ser mais confiável pra partitura/letra; o link
+externo compensa mais pra áudio, que é o que mais estoura o limite de
+tamanho.
 
 **Bugs corrigidos nesta rodada** (ambos eram falha silenciosa, não do
 banco): upload de áudio-guia e criação de anotação em PDF não davam

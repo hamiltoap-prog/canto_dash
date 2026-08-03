@@ -3,7 +3,7 @@ import { Document, Page } from 'react-pdf'
 import 'react-pdf/dist/Page/AnnotationLayer.css'
 import 'react-pdf/dist/Page/TextLayer.css'
 import '../../lib/pdfWorker'
-import { ChevronLeft, ChevronRight, MessageSquarePlus, Trash2, Lock, Globe } from 'lucide-react'
+import { ChevronLeft, ChevronRight, MessageSquarePlus, Trash2, Lock, Globe, ExternalLink } from 'lucide-react'
 import clsx from 'clsx'
 import { createAnnotation, deleteAnnotation, fetchAnnotations } from '../../api/annotations'
 import type { AnnotationVisibility, PdfAnnotation } from '../../types/domain'
@@ -147,13 +147,27 @@ export function PdfViewer({ fileUrl, songId, materialKind }: PdfViewerProps) {
         </button>
       </div>
 
-      {loadError && <ErrorState message={loadError} />}
-
-      <div className="relative overflow-auto rounded-[var(--radius-card)] border border-[var(--color-border)] bg-[var(--color-surface-sunken)] p-2">
+      {loadError ? (
+        <div className="flex flex-col items-center gap-3 rounded-[var(--radius-card)] border border-[var(--color-border)] bg-[var(--color-surface-sunken)] p-6">
+          <ErrorState message={loadError} />
+          <a
+            href={fileUrl}
+            target="_blank"
+            rel="noreferrer"
+            className="flex items-center gap-1.5 text-sm font-medium text-[var(--naipe-accent,var(--color-accent))] hover:underline"
+          >
+            <ExternalLink size={14} />
+            Abrir o PDF em outra aba
+          </a>
+        </div>
+      ) : (
+        <div className="relative overflow-auto rounded-[var(--radius-card)] border border-[var(--color-border)] bg-[var(--color-surface-sunken)] p-2">
         <Document
           file={fileUrl}
           onLoadSuccess={({ numPages }) => setNumPages(numPages)}
-          onLoadError={() => setLoadError('Não foi possível carregar o PDF.')}
+          onLoadError={() =>
+            setLoadError('Não foi possível carregar o PDF aqui dentro do app — o link pode não permitir isso (comum com links do Dropbox).')
+          }
           loading={<LoadingState label="Carregando PDF..." />}
         >
           <div className="relative mx-auto w-fit">
@@ -258,6 +272,7 @@ export function PdfViewer({ fileUrl, songId, materialKind }: PdfViewerProps) {
           </div>
         </Document>
       </div>
+      )}
     </div>
   )
 }
