@@ -25,3 +25,18 @@ export async function fetchMyGroups(): Promise<{ groups: Group[]; memberships: G
   if (groupsError) throw groupsError
   return { groups: (groups ?? []) as Group[], memberships: rows }
 }
+
+/** Creates a new group and makes the caller its admin, atomically (see 0003_profiles_and_invites.sql). */
+export async function createGroup(name: string, description: string | null): Promise<Group> {
+  const { data, error } = await supabase.rpc('create_group_with_admin', {
+    p_name: name,
+    p_description: description,
+  })
+  if (error) throw error
+  return data as Group
+}
+
+export async function updateGroup(groupId: string, fields: Partial<Pick<Group, 'name' | 'description'>>): Promise<void> {
+  const { error } = await supabase.from('groups').update(fields).eq('id', groupId)
+  if (error) throw error
+}

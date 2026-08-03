@@ -11,7 +11,7 @@ const VARIANT_CLASSES: Record<Variant, string> = {
   primary: 'bg-[var(--naipe-accent,var(--color-accent))] text-white hover:opacity-90',
   secondary: 'bg-[var(--color-surface-raised)] text-[var(--color-text)] hover:bg-[var(--color-surface-sunken)]',
   ghost: 'bg-transparent text-[var(--color-text)] hover:bg-[var(--color-surface-raised)]',
-  danger: 'bg-red-500 text-white hover:bg-red-600',
+  danger: 'bg-[var(--color-naipe-soprano)] text-white hover:opacity-90',
 }
 
 export function Button({ variant = 'primary', className, disabled, ...props }: ButtonProps) {

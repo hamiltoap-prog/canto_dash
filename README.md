@@ -31,14 +31,15 @@ npm run lint     # lint (Oxlint)
 1. Crie uma conta em [supabase.com](https://supabase.com) (free tier).
 2. Crie um novo projeto.
 3. Em **SQL Editor**, rode nesta ordem os arquivos de `supabase/migrations/`
-   (`0001_init.sql`, depois `0002_storage.sql`).
+   (`0001_init.sql`, `0002_storage.sql`, `0003_profiles_and_invites.sql`).
 4. Em **Project Settings → API**, copie a `Project URL` e a `anon public
    key` para `VITE_SUPABASE_URL` e `VITE_SUPABASE_ANON_KEY` no seu `.env`
    (e nas variáveis de ambiente do Vercel/Netlify quando for publicar).
-5. Para criar o primeiro grupo e o primeiro admin: cadastre-se pelo app
-   (`/cadastro`), confirme o e-mail, depois insira manualmente as linhas em
-   `groups` e `group_members` (role `'admin'`) pelo Table Editor do
-   Supabase — depois disso o próprio admin gerencia tudo pelo painel.
+5. Cadastre-se pelo app (`/cadastro`), confirme o e-mail, faça login e use
+   o botão **"Criar meu grupo"** na tela de boas-vindas — você já vira
+   admin do grupo automaticamente. Dali em diante, tudo (membros,
+   projetos, músicas, upload de arquivo) é gerenciado pelo próprio painel
+   administrativo (`/admin`), sem precisar mexer no Supabase de novo.
 
 ## Deploy (gratuito)
 
@@ -51,10 +52,12 @@ Os arquivos `vercel.json` e `netlify.toml` já cuidam do rewrite de SPA
 ## Estado do desenvolvimento
 
 Concluído: setup do repositório, schema do banco com RLS por grupo,
-autenticação, seleção de grupo, shell do dashboard, e a tela de
-Repertório (projetos, matriz de disponibilidade por naipe, visualizador
-de PDF com anotações públicas/privadas, player de áudio com loop A/B e
-velocidade reduzida).
+autenticação, seleção de grupo (incluindo criar o próprio grupo), shell do
+dashboard, tela de Repertório (projetos, matriz de disponibilidade por
+naipe, visualizador de PDF com anotações públicas/privadas, player de
+áudio com loop A/B e velocidade reduzida) e Painel Administrativo (Grupo,
+Membros, Projetos e Músicas — com upload de arquivo direto pro Storage).
 
-Próximas etapas (ver `CLAUDE.md`): CRUD de conteúdo (fica no Painel
-Administrativo), Aulas, Agenda e o próprio Painel Administrativo.
+Próximas etapas (ver `CLAUDE.md`): Aulas recorrentes e Agenda (calendário
+mensal), cada uma com sua tela de visualização e o CRUD correspondente no
+Painel Administrativo.

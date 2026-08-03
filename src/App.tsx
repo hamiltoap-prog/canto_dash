@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, lazy, Suspense } from 'react'
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { useAppStore } from './store/useAppStore'
 import { useBootstrapAuth } from './lib/useBootstrapAuth'
@@ -13,7 +13,9 @@ import { RepertoirePage } from './pages/dashboard/RepertoirePage'
 import { ProjectDetailPage } from './pages/dashboard/ProjectDetailPage'
 import { ClassesPage } from './pages/dashboard/ClassesPage'
 import { AgendaPage } from './pages/dashboard/AgendaPage'
-import { AdminPage } from './pages/dashboard/AdminPage'
+
+// Only admins ever open this — keep its CRUD forms and upload UI out of the bundle everyone else downloads.
+const AdminPage = lazy(() => import('./pages/dashboard/AdminPage').then((m) => ({ default: m.AdminPage })))
 
 function useAppliedTheme() {
   const theme = useAppStore((s) => s.theme)
@@ -37,7 +39,14 @@ function AuthedArea() {
         <Route path="repertorio/:projectId" element={<ProjectDetailPage />} />
         <Route path="aulas" element={<ClassesPage />} />
         <Route path="agenda" element={<AgendaPage />} />
-        <Route path="admin" element={<AdminPage />} />
+        <Route
+          path="admin"
+          element={
+            <Suspense fallback={<LoadingState label="Carregando painel administrativo..." />}>
+              <AdminPage />
+            </Suspense>
+          }
+        />
       </Route>
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>

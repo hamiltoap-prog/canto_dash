@@ -227,14 +227,34 @@ design da Apple**. Isso significa, na prática:
    normalizada — pública (admin) vs. privada (membro) — 3b do brief
 7. Player de áudio com velocidade (0.75×/1×/1.25×), marcadores A/B de
    loop e persistência por usuário/música/naipe — 3a do brief
+8. `profiles` (espelho de `auth.users`) + RPCs `create_group_with_admin` e
+   `invite_member` (`supabase/migrations/0003_profiles_and_invites.sql`)
+   — resolvem o "ovo e a galinha" de criar o primeiro grupo/admin e
+   permitem convidar membro existente pelo e-mail sem expor `auth.users`
+   ao cliente
+9. Painel Administrativo (`/admin`, carregado sob demanda, só visível
+   para admin do grupo ativo): editar dados do grupo; Membros (convidar
+   por e-mail, promover/rebaixar admin, remover, com confirmação);
+   Projetos — CRUD completo (paleta de cores, upload de fotos de
+   figurino) e, dentro de cada projeto, CRUD de músicas com upload de
+   partitura/áudio-guia por naipe direto pro bucket `group-files`
+10. "Criar meu grupo" na tela de quem ainda não tem grupo — usa a RPC
+    acima, então dá pra sair do zero sem precisar do Table Editor do
+    Supabase
 
-**Ainda falta na tela de Repertório:** CRUD de projetos/músicas (criar/
-editar/excluir) — por ora só leitura; fica para o Painel Administrativo
-(ver abaixo), que é quem vai gerenciar conteúdo.
+**Ainda falta no Painel Administrativo:** CRUD de Aulas e Eventos (fica
+para quando as telas de Aulas/Agenda existirem — não faz sentido cadastrar
+conteúdo pra uma tela que ainda não existe).
 
 **Próximas etapas (nesta ordem, seguindo o roadmap original):**
-1. Aulas recorrentes com materiais
-2. Agenda (calendário mensal)
-3. Painel Administrativo completo (CRUD de Grupos/Membros/Projetos/
-   Repertório/Aulas/Eventos, upload direto de arquivo, confirmação de
-   exclusão com aviso de vínculos)
+1. Aulas recorrentes com materiais (tela de visualização + CRUD no Admin)
+2. Agenda — calendário mensal (tela de visualização + CRUD no Admin)
+
+**Nota técnica sobre build local:** `npm run build` sem
+`VITE_SUPABASE_URL`/`VITE_SUPABASE_ANON_KEY` definidos produz um bundle
+suspeitosamente pequeno — o `throw` incondicional em `src/lib/supabase.ts`
+faz o bundler eliminar o app inteiro como código morto (tudo que depende
+do cliente Supabase vira inalcançável). Isso não é bug: é só um lembrete
+de sempre ter um `.env` (mesmo com valores fake) ao rodar build local
+para conferir o bundle de verdade. No Netlify/Vercel isso nunca acontece
+porque as env vars já estão configuradas no ambiente de build.

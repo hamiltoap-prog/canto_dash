@@ -1,5 +1,42 @@
-import { EmptyState } from '../../components/ui/AsyncState'
+import { useState } from 'react'
+import clsx from 'clsx'
+import { AdminGroupSection } from '../../components/admin/AdminGroupSection'
+import { AdminMembersSection } from '../../components/admin/AdminMembersSection'
+import { AdminProjectsSection } from '../../components/admin/AdminProjectsSection'
+
+const SECTIONS = [
+  { key: 'grupo', label: 'Grupo' },
+  { key: 'membros', label: 'Membros' },
+  { key: 'projetos', label: 'Projetos' },
+] as const
+
+type SectionKey = (typeof SECTIONS)[number]['key']
 
 export function AdminPage() {
-  return <EmptyState message="O painel de CRUD (grupos, membros, projetos, repertório, aulas, eventos) chega na próxima etapa." />
+  const [section, setSection] = useState<SectionKey>('grupo')
+
+  return (
+    <div className="flex flex-col gap-4">
+      <nav className="flex gap-1.5 border-b border-[var(--color-border)] pb-3" aria-label="Seções do painel administrativo">
+        {SECTIONS.map((s) => (
+          <button
+            key={s.key}
+            onClick={() => setSection(s.key)}
+            className={clsx(
+              'rounded-[var(--radius-chip)] px-3 py-1.5 text-sm font-medium transition-colors',
+              section === s.key
+                ? 'bg-[var(--naipe-accent-soft,var(--color-accent-soft))] text-[var(--naipe-accent,var(--color-accent))]'
+                : 'text-[var(--color-text-muted)] hover:bg-[var(--color-surface-raised)]',
+            )}
+          >
+            {s.label}
+          </button>
+        ))}
+      </nav>
+
+      {section === 'grupo' && <AdminGroupSection />}
+      {section === 'membros' && <AdminMembersSection />}
+      {section === 'projetos' && <AdminProjectsSection />}
+    </div>
+  )
 }
